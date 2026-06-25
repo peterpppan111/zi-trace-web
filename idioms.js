@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bingSearchBtn.href = `https://www.bing.com/search?q=${encodeURIComponent(text + ' 成語')}`;
       bingSearchBtn.classList.toggle('blur-text', isTestMode);
     }
-    if (revealBtn) revealBtn.style.display = isTestMode ? '' : 'none';
+    if (revealBtn) revealBtn.style.display = isTestMode ? 'inline-flex' : 'none';
 
     // Build sequence slots with staggered animation
     chars.forEach((char, idx) => {
