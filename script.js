@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (responseCache.has(char)) {
         htmlString = responseCache.get(char);
       } else {
-        const body = new URLSearchParams({ EudcFontChar: char, ImageSize: '48' });
+        const body = new URLSearchParams({ EudcFontChar: char, ImageSize: '128' });
         const res  = await fetch('/api/proxy', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
