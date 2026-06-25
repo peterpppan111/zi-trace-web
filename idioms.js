@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         table.querySelectorAll('img').forEach(img => {
           const src = img.getAttribute('src');
           if (src?.startsWith('/')) {
-            img.src = 'https://xiaoxue.iis.sinica.edu.tw' + src;
+            img.src = '/api/proxy-img?url=' + encodeURIComponent(src);
             count++;
           }
         });

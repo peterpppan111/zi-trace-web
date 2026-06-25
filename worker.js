@@ -33,6 +33,11 @@ export default {
       return handleProxy(request);
     }
 
+    // 圖片代理路由
+    if (cleanPath === '/api/proxy-img') {
+      return handleImageProxy(request);
+    }
+
     // 其他請求交給靜態檔，如果是目前的版本，重寫請求路徑以供 ASSETS 讀取
     let targetRequest = request;
     if (versionMatch && versionMatch[1] === CURRENT_VERSION) {
@@ -91,6 +96,56 @@ async function handleProxy(request) {
     });
   } catch (err) {
     return new Response(`代理失敗: ${err.message}`, {
+      status: 500,
+      headers: corsHeaders(),
+    });
+  }
+}
+
+async function handleImageProxy(request) {
+  const url = new URL(request.url);
+  const targetUrlPath = url.searchParams.get('url');
+  if (!targetUrlPath) {
+    return new Response('Missing url parameter', { status: 400 });
+  }
+
+  // CORS preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders() });
+  }
+
+  // 構建絕對 URL
+  const absoluteUrl = 'https://xiaoxue.iis.sinica.edu.tw' + targetUrlPath;
+
+  try {
+    const upstream = await fetch(absoluteUrl, {
+      method: 'GET',
+      headers: {
+        'Referer':         'https://xiaoxue.iis.sinica.edu.tw/yanbian',
+        'User-Agent':      'Mozilla/5.0 (compatible; ZiTrace/1.0)',
+        'Accept-Language': 'zh-TW,zh;q=0.9',
+      },
+    });
+
+    if (!upstream.ok) {
+      return new Response(`上游錯誤 HTTP ${upstream.status}`, {
+        status: 502,
+        headers: corsHeaders(),
+      });
+    }
+
+    const contentType = upstream.headers.get('Content-Type') || 'image/png';
+    const body = await upstream.arrayBuffer();
+
+    return new Response(body, {
+      headers: {
+        'Content-Type': contentType,
+        'Cache-Control': 'public, max-age=604800', // 快取 7 天
+        ...corsHeaders(),
+      },
+    });
+  } catch (err) {
+    return new Response(`圖片代理失敗: ${err.message}`, {
       status: 500,
       headers: corsHeaders(),
     });
