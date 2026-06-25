@@ -1,3 +1,7 @@
 name = "zi-trace-web"
-pages_build_output_dir = "."
+main = "worker.js"
 compatibility_date = "2024-09-23"
+
+[assets]
+directory = "."
+binding = "ASSETS"
