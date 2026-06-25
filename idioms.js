@@ -1,34 +1,34 @@
 // idioms.js — 題庫練習頁邏輯
 
 document.addEventListener('DOMContentLoaded', () => {
-  const refreshBtn        = document.getElementById('refreshBtn');
-  const idiomGrid         = document.getElementById('idiomOptions');
-  const resultsContainer  = document.getElementById('resultsContainer');
-  const charTemplate      = document.getElementById('charTemplate');
-  const sentencePreview   = document.getElementById('sentencePreview');
-  const sentenceSequence  = document.getElementById('sentenceSequence');
-  const bingSearchBtn     = document.getElementById('bingSearchBtn');
-  const bankSelect        = document.getElementById('bankSelect');
-  const sectionTitle      = document.getElementById('sectionTitle');
-  const batchInfo         = document.getElementById('batchInfo');
-  const learnModeBtn      = document.getElementById('learnModeBtn');
-  const testModeBtn       = document.getElementById('testModeBtn');
-  const revealBtn         = document.getElementById('revealBtn');
+  const refreshBtn       = document.getElementById('refreshBtn');
+  const idiomGrid        = document.getElementById('idiomOptions');
+  const resultsContainer = document.getElementById('resultsContainer');
+  const charTemplate     = document.getElementById('charTemplate');
+  const sentencePreview  = document.getElementById('sentencePreview');
+  const sentenceSequence = document.getElementById('sentenceSequence');
+  const bingSearchBtn    = document.getElementById('bingSearchBtn');
+  const tierTabs         = document.getElementById('tierTabs');
+  const sectionTitle     = document.getElementById('sectionTitle');
+  const batchInfo        = document.getElementById('batchInfo');
+  const learnModeBtn     = document.getElementById('learnModeBtn');
+  const testModeBtn      = document.getElementById('testModeBtn');
+  const revealBtn        = document.getElementById('revealBtn');
 
-  const responseCache = new Map();
+  const responseCache  = new Map();
   const ITEMS_PER_PAGE = 30;
 
+  let currentBank  = 'sprint';
   let originalPool = [];
   let currentPool  = [];
   let currentPage  = 1;
   let isTestMode   = false;
 
-  // ── Pool Helpers ─────────────────────────────
+  // ── Pool ──────────────────────────────────────
   function getPool() {
-    const v = bankSelect?.value || 'sprint';
-    if (v === 'all')      return typeof ALL_IDIOMS      !== 'undefined' ? ALL_IDIOMS      : [];
-    if (v === 'sprint')   return typeof SPRINT_IDIOMS   !== 'undefined' ? SPRINT_IDIOMS   : [];
-    if (v === 'essential')return typeof ESSENTIAL_IDIOMS!== 'undefined' ? ESSENTIAL_IDIOMS: [];
+    if (currentBank === 'all')       return typeof ALL_IDIOMS       !== 'undefined' ? ALL_IDIOMS       : [];
+    if (currentBank === 'sprint')    return typeof SPRINT_IDIOMS    !== 'undefined' ? SPRINT_IDIOMS    : [];
+    if (currentBank === 'essential') return typeof ESSENTIAL_IDIOMS !== 'undefined' ? ESSENTIAL_IDIOMS : [];
     return typeof COMMON_IDIOMS !== 'undefined' ? COMMON_IDIOMS : [];
   }
 
@@ -37,37 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
     currentPool  = isTestMode
       ? [...originalPool].sort(() => 0.5 - Math.random())
       : [...originalPool];
-    currentPage  = 1;
+    currentPage = 1;
   }
 
   function nextBatch() {
     if (!currentPool.length) return [];
     const totalPages = Math.ceil(currentPool.length / ITEMS_PER_PAGE);
     if (currentPage > totalPages) currentPage = 1;
+    if (batchInfo) batchInfo.textContent = `第 ${currentPage} / ${totalPages} 批`;
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    if (batchInfo) {
-      const isMissing = bankSelect?.value === 'missing';
-      batchInfo.textContent = `第 ${currentPage}/${totalPages} 批`;
-    }
     currentPage++;
     return currentPool.slice(start, start + ITEMS_PER_PAGE);
   }
 
-  // ── Render Idiom Grid ─────────────────────────
+  // ── Render idioms ──────────────────────────────
   function renderIdioms() {
     idiomGrid.innerHTML = '';
-    if (sectionTitle) {
-      sectionTitle.textContent = bankSelect?.value === 'missing' ? '可選單字' : '可選成語';
-    }
+    if (sectionTitle) sectionTitle.textContent = '可選成語';
 
     const batch = nextBatch();
     batch.forEach(idiom => {
       const btn = document.createElement('button');
       btn.className = 'idiom-btn';
       btn.dataset.idiom = idiom;
-      btn.textContent = isTestMode
-        ? (idiom.length === 1 ? '？' : '？'.repeat(idiom.length))
-        : idiom;
+      btn.textContent = isTestMode ? '？'.repeat(idiom.length) : idiom;
       btn.addEventListener('click', () => {
         idiomGrid.querySelectorAll('.idiom-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -81,81 +74,83 @@ document.addEventListener('DOMContentLoaded', () => {
     sentenceSequence.innerHTML = '';
   }
 
-  // ── Controls ──────────────────────────────────
+  // ── Tier tabs ──────────────────────────────────
+  tierTabs?.querySelectorAll('.tier-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      tierTabs.querySelectorAll('.tier-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentBank = tab.dataset.bank;
+      initPool();
+      renderIdioms();
+    });
+  });
+
   refreshBtn?.addEventListener('click', renderIdioms);
 
-  bankSelect?.addEventListener('change', () => {
-    initPool();
+  // ── Mode switch ────────────────────────────────
+  learnModeBtn?.addEventListener('click', () => {
+    if (!isTestMode) return;
+    isTestMode = false;
+    learnModeBtn.classList.add('active');
+    testModeBtn.classList.remove('active');
+    currentPool = [...originalPool];
+    currentPage = 1;
     renderIdioms();
   });
 
-  learnModeBtn?.addEventListener('click', () => {
-    if (isTestMode) {
-      isTestMode = false;
-      learnModeBtn.classList.add('active');
-      testModeBtn.classList.remove('active');
-      currentPool = [...originalPool];
-      currentPage = 1;
-      renderIdioms();
-    }
-  });
-
   testModeBtn?.addEventListener('click', () => {
-    if (!isTestMode) {
-      isTestMode = true;
-      testModeBtn.classList.add('active');
-      learnModeBtn.classList.remove('active');
-      currentPool = [...originalPool].sort(() => 0.5 - Math.random());
-      currentPage = 1;
-      renderIdioms();
-    }
+    if (isTestMode) return;
+    isTestMode = true;
+    testModeBtn.classList.add('active');
+    learnModeBtn.classList.remove('active');
+    currentPool = [...originalPool].sort(() => 0.5 - Math.random());
+    currentPage = 1;
+    renderIdioms();
   });
 
+  // ── Reveal ─────────────────────────────────────
   revealBtn?.addEventListener('click', () => {
     document.querySelectorAll('.blur-text').forEach(el => el.classList.remove('blur-text'));
     revealBtn.style.display = 'none';
-    const activeBtn = idiomGrid.querySelector('.idiom-btn.active');
-    if (activeBtn) activeBtn.textContent = activeBtn.dataset.idiom;
+    const active = idiomGrid.querySelector('.idiom-btn.active');
+    if (active) active.textContent = active.dataset.idiom;
   });
 
-  // ── Run Search ────────────────────────────────
+  // ── Search ─────────────────────────────────────
   async function runSearch(text) {
     if (!text) return;
-
     resultsContainer.innerHTML = '';
     sentenceSequence.innerHTML = '';
 
-    const chars = [...text].filter(c => c.trim());
+    const chars = [...text].filter(c => c.trim() && /[\u4e00-\u9fff\u3400-\u4dbf]/.test(c));
     if (!chars.length) { sentencePreview.style.display = 'none'; return; }
 
     sentencePreview.style.display = '';
 
     if (bingSearchBtn) {
-      bingSearchBtn.href = `https://www.bing.com/search?q=${encodeURIComponent(text + (text.length === 1 ? ' 漢字' : ' 成語'))}`;
+      bingSearchBtn.href = `https://www.bing.com/search?q=${encodeURIComponent(text + ' 成語')}`;
       bingSearchBtn.classList.toggle('blur-text', isTestMode);
     }
-
     if (revealBtn) revealBtn.style.display = isTestMode ? '' : 'none';
 
-    // Build sequence slots
+    // Build sequence slots with staggered animation
     chars.forEach((char, idx) => {
       const slot = document.createElement('div');
       slot.className = 'seq-char';
       slot.dataset.char = char;
+      slot.style.animationDelay = `${idx * 0.08}s`;
       slot.innerHTML = `
         <div class="ancient-img-placeholder">
           <div class="spinner spinner-sm"></div>
         </div>
         <div class="ancient-source"></div>
-        <div class="modern-char ${isTestMode ? 'blur-text' : ''}">${char}</div>
+        <div class="modern-char${isTestMode ? ' blur-text' : ''}">${char}</div>
       `;
       sentenceSequence.appendChild(slot);
     });
 
     const uniqueChars = [...new Set(chars)];
-
-    // Create cards
-    const cardsData = uniqueChars.map(char => {
+    const cardsData = uniqueChars.map((char, i) => {
       const node = charTemplate.content.cloneNode(true);
       const titleEl = node.querySelector('.card-char');
       titleEl.textContent = char;
@@ -163,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
       resultsContainer.appendChild(node);
 
       const card      = resultsContainer.lastElementChild;
+      card.style.animationDelay = `${i * 0.1}s`;
       const expandBtn = card.querySelector('.expand-btn');
       const content   = card.querySelector('.card-content');
 
@@ -172,19 +168,16 @@ document.addEventListener('DOMContentLoaded', () => {
         expandBtn.textContent = collapsed ? '收起演變表' : '展開完整演變';
       });
 
-      return {
-        char,
-        container: content,
-        loading:   card.querySelector('.loading-indicator'),
-        error:     card.querySelector('.error-tag'),
-        expandBtn,
-      };
+      return { char, container: content,
+        loading: card.querySelector('.loading-indicator'),
+        error:   card.querySelector('.error-tag'),
+        expandBtn };
     });
 
     await Promise.allSettled(cardsData.map(d => fetchChar(d)));
   }
 
-  // ── Fetch Ancient Forms ───────────────────────
+  // ── Fetch ──────────────────────────────────────
   async function fetchChar({ char, container, loading, error, expandBtn }) {
     try {
       let html;
@@ -216,38 +209,30 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
         table.querySelectorAll('td').forEach(td => {
-          if (!td.querySelector('img') && !td.textContent?.trim())
-            td.style.display = 'none';
+          if (!td.querySelector('img') && !td.textContent?.trim()) td.style.display = 'none';
         });
 
         if (count > 0) {
           container.appendChild(table);
           expandBtn.style.display = '';
-
-          const firstCell = Array.from(
-            table.querySelectorAll('td.VariantListA, td.VariantListB')
-          ).find(td => td.querySelector('img') && td.style.display !== 'none');
-
+          const firstCell = Array.from(table.querySelectorAll('td.VariantListA,td.VariantListB'))
+            .find(td => td.querySelector('img') && td.style.display !== 'none');
           if (firstCell) {
             const img   = firstCell.querySelector('img');
             const clone = firstCell.cloneNode(true);
             clone.querySelector('img')?.remove();
-            const srcText = clone.textContent.replace(/\s+/g, ' ').trim();
-            updateSlots(char, img.src, srcText);
+            updateSlots(char, img.src, clone.textContent.replace(/\s+/g,' ').trim());
           }
         } else {
-          showErr(error, '暫無演變圖形');
-          updateSlots(char, null, '暫無');
+          showErr(error, '暫無演變圖形'); updateSlots(char, null, '暫無');
         }
       } else {
-        showErr(error, '數據庫未收錄此字');
-        updateSlots(char, null, '無記錄');
+        showErr(error, '數據庫未收錄此字'); updateSlots(char, null, '無記錄');
       }
     } catch (err) {
       console.error(char, err);
       loading.style.display = 'none';
-      showErr(error, '請求失敗，請稍後再試');
-      updateSlots(char, null, '加載失敗');
+      showErr(error, '請求失敗'); updateSlots(char, null, '加載失敗');
     }
   }
 
@@ -261,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
           img.src = imgSrc; img.className = 'ancient-img'; img.alt = char;
           ph.replaceWith(img);
         } else {
-          ph.innerHTML = '<span style="color:var(--red);font-size:18px">×</span>';
+          ph.innerHTML = '<span style="color:var(--red);font-size:20px">×</span>';
         }
       }
       if (src) src.textContent = text || '';
@@ -270,14 +255,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showErr(el, msg) { el.textContent = msg; el.style.display = ''; }
 
-  // ── Init ──────────────────────────────────────
-  const hasData = typeof SPRINT_IDIOMS !== 'undefined'
-    || typeof ESSENTIAL_IDIOMS !== 'undefined'
-    || typeof COMMON_IDIOMS !== 'undefined'
-    || typeof ALL_IDIOMS !== 'undefined';
-
-  if (hasData) {
-    initPool();
-    renderIdioms();
-  }
+  // ── Init ───────────────────────────────────────
+  const hasData = ['SPRINT_IDIOMS','ESSENTIAL_IDIOMS','COMMON_IDIOMS','ALL_IDIOMS']
+    .some(k => typeof window[k] !== 'undefined');
+  if (hasData) { initPool(); renderIdioms(); }
 });

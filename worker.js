@@ -1,9 +1,29 @@
 // worker.js — Cloudflare Workers 入口
-// 处理 /api/proxy 代理，其余请求交给静态资源
+// 版本控制：修改 CURRENT_VERSION 可让旧分享链接失效
+
+const CURRENT_VERSION = 'v1'; // ← 改这里让旧链接失效
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    // 版本过期检测（如 /v0/* 访问旧版本）
+    const versionMatch = url.pathname.match(/^\/(v\d+)(\/|$)/);
+    if (versionMatch && versionMatch[1] !== CURRENT_VERSION) {
+      return new Response(
+        `<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
+        <title>鏈接已過期</title>
+        <style>body{font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F5F1EA;margin:0}
+        .box{text-align:center;padding:48px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.1);max-width:380px}
+        h1{font-size:48px;margin:0 0 8px}h2{color:#1C1814;margin:0 0 12px}
+        p{color:#8C877F;font-size:14px;line-height:1.6}
+        </style></head><body><div class="box">
+        <h1>📜</h1><h2>此分享鏈接已過期</h2>
+        <p>學習資料已更新，請向分享者索取新版鏈接。</p>
+        </div></body></html>`,
+        { status: 410, headers: { 'Content-Type': 'text/html;charset=utf-8' } }
+      );
+    }
 
     // 代理路由
     if (url.pathname === '/api/proxy') {

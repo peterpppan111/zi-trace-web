@@ -4,123 +4,133 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>題庫練習 · 漢字源流</title>
-  <meta name="description" content="從古文字還原字表中抽取四字成語，進行甲骨文、金文字形識讀練習。">
+  <meta name="description" content="從古文字還原字表中抽取四字成語，練習甲骨文、金文字形識讀。所有成語均確認每字具有古字形。">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app">
+<main class="app">
 
-    <!-- Navbar -->
-    <nav class="navbar">
-      <a href="index.html" class="navbar-brand">
-        <div class="brand-icon">文</div>
-        <span class="brand-text">漢字源流</span>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+      <div class="brand-icon">文</div>
+      <span class="brand-text">漢字源流</span>
+    </a>
+    <div class="navbar-nav">
+      <a href="index.html" class="nav-link">字形查詢</a>
+      <a href="idioms.html" class="nav-link active">題庫練習</a>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="page-header">
+    <h1 class="page-title">古文字成語題庫</h1>
+    <p class="page-subtitle">所有成語均篩選自古文字還原字表，確保每個字都具有甲骨文、金文或戰國文字字形。</p>
+  </header>
+
+  <!-- Notice -->
+  <div class="notice-banner" id="noticeBanner">
+    <span>✦</span>
+    <span class="notice-text">字庫說明：所有成語每字均有古字形記錄。點擊成語查看古字形，學習模式顯示答案，測驗模式遮蔽答案。</span>
+    <button class="notice-close" onclick="this.parentElement.remove()">×</button>
+  </div>
+
+  <!-- Tier tabs -->
+  <div class="tier-tabs" id="tierTabs">
+    <button class="tier-tab active" data-bank="sprint">
+      🚀 考前衝刺
+      <span class="tier-count">120詞</span>
+    </button>
+    <button class="tier-tab" data-bank="essential">
+      ⭐ 高效涵蓋
+      <span class="tier-count">444詞</span>
+    </button>
+    <button class="tier-tab" data-bank="common">
+      📚 常用題庫
+      <span class="tier-count">691詞</span>
+    </button>
+    <button class="tier-tab" data-bank="all">
+      📖 完整題庫
+      <span class="tier-count">1319詞</span>
+    </button>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-row">
+    <div class="controls-left">
+      <span class="section-label" id="sectionTitle">可選成語</span>
+      <span class="batch-tag" id="batchInfo"></span>
+    </div>
+    <div class="controls-right">
+      <div class="mode-switch">
+        <button id="learnModeBtn" class="mode-btn active">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+          學習
+        </button>
+        <button id="testModeBtn" class="mode-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+          測驗
+        </button>
+      </div>
+      <button id="refreshBtn" class="btn btn-sm">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        換一批
+      </button>
+    </div>
+  </div>
+
+  <!-- Idiom grid -->
+  <div id="idiomOptions" class="idiom-grid"></div>
+
+  <!-- Preview strip -->
+  <section id="sentencePreview" class="preview-section" style="display:none">
+    <div class="preview-header">
+      <div class="preview-header-left">
+        <h3>古字形拼寫</h3>
+        <div class="preview-subtitle">取每個字最古老的字形（甲骨文 › 金文 › 戰國文字 › 小篆）</div>
+      </div>
+      <a id="bingSearchBtn" href="#" target="_blank" rel="noopener" class="btn btn-sm">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        在 Bing 搜尋此詞
       </a>
-      <div class="navbar-nav">
-        <a href="index.html" class="nav-link">字形查詢</a>
-        <a href="idioms.html" class="nav-link active">題庫練習</a>
-      </div>
-    </nav>
-
-    <!-- Page Header -->
-    <header class="page-header">
-      <h1 class="page-title">題庫模擬</h1>
-      <p class="page-subtitle">所有成語均已確認每字皆有古文字字形。選詞、點擊，追溯四字的甲骨文或金文寫法。</p>
-    </header>
-
-    <!-- Notice banner -->
-    <div class="notice-banner" id="noticeBanner">
-      <span class="notice-icon">✦</span>
-      <span class="notice-text">字庫說明：全部成語均篩選自「古文字還原字表」，確保每個字都具有甲骨文、金文或戰國文字字形，適合一天內高效複習。</span>
-      <button class="notice-close" onclick="this.parentElement.style.display='none'" title="關閉">×</button>
     </div>
+    <div id="sentenceSequence" class="char-sequence"></div>
+    <div class="reveal-wrap">
+      <button id="revealBtn" class="btn btn-accent reveal-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        揭開答案
+      </button>
+    </div>
+  </section>
 
-    <!-- Controls -->
-    <div class="controls-bar">
-      <div class="controls-title-group">
-        <span class="section-title" id="sectionTitle">可選成語</span>
-        <span class="batch-info" id="batchInfo"></span>
-      </div>
-      <div class="controls-actions">
-        <!-- Mode switch -->
-        <div class="mode-switch">
-          <button id="learnModeBtn" class="mode-btn active">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-            學習
-          </button>
-          <button id="testModeBtn" class="mode-btn">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            測驗
-          </button>
+  <!-- Results -->
+  <section id="resultsContainer" class="results-grid"></section>
+
+  <footer class="site-footer">
+    <p>字形數據來源：<a href="https://xiaoxue.iis.sinica.edu.tw/yanbian" target="_blank" rel="noopener">中央研究院小學堂漢字古今字資料庫</a><br>
+    所有成語均篩選確認每字具有古字形。本工具僅供學習，版權歸中央研究院所有。</p>
+  </footer>
+</main>
+
+<!-- Card template -->
+<template id="charTemplate">
+  <div class="char-card">
+    <div class="card-header">
+      <h2 class="card-char"></h2>
+      <div class="card-controls">
+        <div class="loading-indicator">
+          <div class="spinner"></div>
+          <span>查詢中…</span>
         </div>
-        <!-- Bank selector -->
-        <select id="bankSelect">
-          <option value="sprint">🚀 考前衝刺 (120詞)</option>
-          <option value="essential">⭐ 高效涵蓋 (444詞)</option>
-          <option value="common">📚 常用題庫 (691詞)</option>
-          <option value="all">📖 完整題庫 (1319詞)</option>
-        </select>
-        <!-- Refresh -->
-        <button id="refreshBtn" class="btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          換一批
-        </button>
+        <div class="error-tag"></div>
+        <button class="btn btn-sm expand-btn" style="display:none">收起演變表</button>
       </div>
     </div>
+    <div class="card-content"></div>
+  </div>
+</template>
 
-    <!-- Idiom Grid -->
-    <div id="idiomOptions" class="idiom-grid"></div>
-
-    <!-- Ancient preview strip -->
-    <section id="sentencePreview" class="preview-section" style="display:none;">
-      <div class="preview-header">
-        <div class="preview-header-left">
-          <h3>古字形拼寫</h3>
-          <span class="subtitle">取每個字最古老的字形組合（甲骨文優先）</span>
-        </div>
-        <a id="bingSearchBtn" href="#" target="_blank" rel="noopener" class="btn btn-sm">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          在 Bing 搜尋此詞
-        </a>
-      </div>
-      <div id="sentenceSequence" class="char-sequence"></div>
-      <div class="reveal-wrap">
-        <button id="revealBtn" class="btn btn-accent reveal-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          揭開答案
-        </button>
-      </div>
-    </section>
-
-    <!-- Results -->
-    <section id="resultsContainer" class="results-grid"></section>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-      <p>字形數據來源：<a href="https://xiaoxue.iis.sinica.edu.tw/yanbian" target="_blank" rel="noopener">中央研究院小學堂漢字古今字資料庫</a><br>
-      所有成語均已篩選，確保每字具備古文字字形。本工具僅供學習，版權歸中央研究院所有。</p>
-    </footer>
-  </main>
-
-  <!-- Card Template -->
-  <template id="charTemplate">
-    <div class="char-card">
-      <div class="card-header">
-        <h2 class="card-char"></h2>
-        <div class="card-controls">
-          <div class="loading-indicator">
-            <div class="spinner"></div>
-            <span>查詢中…</span>
-          </div>
-          <div class="error-tag"></div>
-          <button class="btn btn-sm expand-btn" style="display:none;">收起演變表</button>
-        </div>
-      </div>
-      <div class="card-content"></div>
-    </div>
-  </template>
-
-  <script src="idioms_data.js"></script>
-  <script src="idioms.js"></script>
+<script src="idioms_data.js"></script>
+<script src="idioms.js"></script>
 </body>
 </html>
