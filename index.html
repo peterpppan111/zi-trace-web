@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>漢字源流 · 字形演變探索</title>
+  <meta name="description" content="輸入任意漢字，追溯其從甲骨文、金文、戰國文字到現代的千年演變軌跡。數據來源：中央研究院小學堂。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="index.html" class="navbar-brand">
+        <div class="brand-icon">文</div>
+        <span class="brand-text">漢字源流</span>
+      </a>
+      <div class="navbar-nav">
+        <a href="index.html" class="nav-link active">字形查詢</a>
+        <a href="idioms.html" class="nav-link">題庫練習</a>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1 class="page-title">字形演變探索</h1>
+      <p class="page-subtitle">輸入任意漢字或詞句，追溯每一個字從甲骨文到現代的千年演變軌跡。</p>
+    </header>
+
+    <!-- Search -->
+    <div class="search-box">
+      <div class="search-input-row">
+        <input type="text" id="searchInput" placeholder="例如：自強不息、天下" autocomplete="off" spellcheck="false" />
+        <button id="searchBtn" class="btn btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          開始追溯
+        </button>
+      </div>
+      <p class="search-hint">建議輸入繁體字，簡體字可能無法查詢到對應的古字形。</p>
+    </div>
+
+    <!-- Ancient Char Preview -->
+    <section id="sentencePreview" class="preview-section" style="display:none;">
+      <div class="preview-header">
+        <div class="preview-header-left">
+          <h3>古字形拼寫</h3>
+          <span class="subtitle">取每個字最古老的字形</span>
+        </div>
+      </div>
+      <div id="sentenceSequence" class="char-sequence"></div>
+    </section>
+
+    <!-- Results -->
+    <section id="resultsContainer" class="results-grid"></section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>字形數據來源：<a href="https://xiaoxue.iis.sinica.edu.tw/yanbian" target="_blank" rel="noopener">中央研究院小學堂漢字古今字資料庫</a><br>
+      本工具僅供學習與交流，數據版權歸中央研究院所有。</p>
+    </footer>
+  </main>
+
+  <!-- Card Template -->
+  <template id="charTemplate">
+    <div class="char-card">
+      <div class="card-header">
+        <h2 class="card-char"></h2>
+        <div class="card-controls">
+          <div class="loading-indicator">
+            <div class="spinner"></div>
+            <span>查詢中…</span>
+          </div>
+          <div class="error-tag"></div>
+          <button class="btn btn-sm expand-btn" style="display:none;">收起演變表</button>
+        </div>
+      </div>
+      <div class="card-content"></div>
+    </div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
