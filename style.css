@@ -355,6 +355,9 @@ body{
   object-fit:contain;
   filter:drop-shadow(0 2px 4px rgba(0,0,0,0.1));
   transition:transform 0.3s var(--ease);
+  mix-blend-mode:multiply;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
 }
 .seq-char:hover .ancient-img{transform:scale(1.05);}
 .seq-char .ancient-img-placeholder{
@@ -444,6 +447,9 @@ body{
 }
 .charValue{
   max-width:56px;height:auto;margin:0 auto 8px;display:block;
+  mix-blend-mode:multiply;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
 }
 .Information,.RemindMessage,.ZiList,#StartOrder,
 #yanbian_result tr:has(td[colspan="10"]),
@@ -517,6 +523,7 @@ body{
 @media(prefers-color-scheme:dark){
   .charValue,.seq-char .ancient-img{
     filter:invert(0.9) hue-rotate(180deg) brightness(0.85);
+    mix-blend-mode:screen;
   }
 }
 
