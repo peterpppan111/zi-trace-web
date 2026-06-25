@@ -169,4 +169,34 @@ document.addEventListener('DOMContentLoaded', () => {
     el.textContent = msg;
     el.style.display = '';
   }
+
+  // ── Share Link ─────────────────────────────────
+  const CURRENT_VERSION = 'v1';
+  const shareBtn = document.getElementById('shareVersionBtn');
+  shareBtn?.addEventListener('click', () => {
+    const origin = window.location.origin;
+    let pathname = window.location.pathname;
+    
+    // 移除現有的版本首碼
+    pathname = pathname.replace(/^\/v\d+/, '');
+    if (!pathname.startsWith('/')) pathname = '/' + pathname;
+    
+    const shareUrl = `${origin}/${CURRENT_VERSION}${pathname}`;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      const originalText = shareBtn.innerHTML;
+      shareBtn.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        已複製！
+      `;
+      shareBtn.classList.add('success');
+      setTimeout(() => {
+        shareBtn.innerHTML = originalText;
+        shareBtn.classList.remove('success');
+      }, 2000);
+    }).catch(err => {
+      console.error('複製失敗:', err);
+      alert('複製連結失敗，請手動複製地址欄鏈接');
+    });
+  });
 });

@@ -7,7 +7,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // 版本过期检测（如 /v0/* 访问旧版本）
+    // 版本過期檢測（如 /v0/* 訪問舊版本）
     const versionMatch = url.pathname.match(/^\/(v\d+)(\/|$)/);
     if (versionMatch && versionMatch[1] !== CURRENT_VERSION) {
       return new Response(
@@ -25,13 +25,24 @@ export default {
       );
     }
 
+    // 獲取去除了版本號首碼的乾淨路徑
+    const cleanPath = url.pathname.replace(/^\/v\d+/, '') || '/';
+
     // 代理路由
-    if (url.pathname === '/api/proxy') {
+    if (cleanPath === '/api/proxy') {
       return handleProxy(request);
     }
 
+    // 其他請求交給靜態檔，如果是目前的版本，重寫請求路徑以供 ASSETS 讀取
+    let targetRequest = request;
+    if (versionMatch && versionMatch[1] === CURRENT_VERSION) {
+      const targetUrl = new URL(request.url);
+      targetUrl.pathname = cleanPath;
+      targetRequest = new Request(targetUrl.toString(), request);
+    }
+
     // 其他请求交给静态文件
-    return env.ASSETS.fetch(request);
+    return env.ASSETS.fetch(targetRequest);
   },
 };
 

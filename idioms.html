@@ -19,6 +19,10 @@
     <div class="navbar-nav">
       <a href="index.html" class="nav-link">字形查詢</a>
       <a href="idioms.html" class="nav-link active">題庫練習</a>
+      <button id="shareVersionBtn" class="btn-share" title="複製此版本的分享連結給他人">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        複製分享連結
+      </button>
     </div>
   </nav>
 
@@ -37,12 +41,16 @@
 
   <!-- Tier tabs -->
   <div class="tier-tabs" id="tierTabs">
-    <button class="tier-tab active" data-bank="sprint">
+    <button class="tier-tab active" data-bank="review">
+      📋 課堂複習
+      <span class="tier-count">68詞</span>
+    </button>
+    <button class="tier-tab" data-bank="sprint">
       🚀 考前衝刺
       <span class="tier-count">120詞</span>
     </button>
     <button class="tier-tab" data-bank="essential">
-      ⭐ 高效涵蓋
+      ⭐ 核心必考
       <span class="tier-count">444詞</span>
     </button>
     <button class="tier-tab" data-bank="common">
@@ -51,7 +59,7 @@
     </button>
     <button class="tier-tab" data-bank="all">
       📖 完整題庫
-      <span class="tier-count">1319詞</span>
+      <span class="tier-count">3045詞</span>
     </button>
   </div>
 
