@@ -243,6 +243,7 @@ body{
 .search-input-row{
   position: relative;
   display:flex;
+  align-items: center;
   border-radius:var(--r-lg);
   background: rgba(20, 20, 20, 0.6);
   backdrop-filter: blur(24px);
