@@ -11,16 +11,24 @@
   --surface:       rgba(255, 255, 255, 0.03);
   --surface-2:     rgba(255, 255, 255, 0.06);
   --surface-3:     rgba(255, 255, 255, 0.1);
+  --bg-primary: #0A0A0A;
+  --bg-secondary: rgba(20, 20, 20, 0.6);
+  --bg-glass: rgba(255, 255, 255, 0.03);
+  --bg-glass-hover: rgba(255, 255, 255, 0.08);
+  --border-glass: rgba(255, 255, 255, 0.05);
+  --border-focus: rgba(255, 255, 255, 0.15);
+  --text-primary: #F8F9FA;
+  --text-secondary: #ADB5BD;
   --ink:           #F8F9FA;
   --ink-2:         #E9ECEF;
   --muted:         #ADB5BD;
   --line:          rgba(255, 255, 255, 0.08);
   --line-strong:   rgba(255, 255, 255, 0.15);
   --hover:         rgba(255, 255, 255, 0.05);
-  --accent:        #F59E0B; /* Amber Gold */
-  --accent-2:      #FBBF24;
-  --accent-soft:   rgba(245, 158, 11, 0.15);
-  --accent-glow:   rgba(245, 158, 11, 0.4);
+  --accent:        #4FA89B; /* 翠玉色 Tranquil Jade */
+  --accent-2:      #75C5B1;
+  --accent-soft:   rgba(79, 168, 155, 0.15);
+  --accent-glow:   rgba(79, 168, 155, 0.4);
   --green:         #10B981;
   --green-soft:    rgba(16, 185, 129, 0.15);
   --red:           #EF4444;
@@ -246,7 +254,7 @@ body{
 }
 .search-input-row:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), 0 20px 48px rgba(0,0,0,0.6), 0 0 32px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 0 1px var(--accent), 0 20px 48px rgba(0,0,0,0.6), 0 0 32px var(--accent-glow);
   transform: translateY(-2px);
 }
 #searchInput{
