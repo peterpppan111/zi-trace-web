@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const learnModeBtn     = document.getElementById('learnModeBtn');
   const testModeBtn      = document.getElementById('testModeBtn');
   const revealBtn        = document.getElementById('revealBtn');
+  const nextBtn          = document.getElementById('nextBtn');
 
   const responseCache  = new Map();
   const ITEMS_PER_PAGE = 30;
@@ -25,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let isTestMode   = false;
 
   // ── Pool ──────────────────────────────────────
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
   function getPool() {
     if (currentBank === 'review')    return typeof REVIEW_IDIOMS    !== 'undefined' ? REVIEW_IDIOMS    : [];
     if (currentBank === 'all')       return typeof ALL_IDIOMS       !== 'undefined' ? ALL_IDIOMS       : [];
@@ -36,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function initPool() {
     originalPool = [...getPool()];
     currentPool  = isTestMode
-      ? [...originalPool].sort(() => 0.5 - Math.random())
+      ? shuffleArray([...originalPool])
       : [...originalPool];
     currentPage = 1;
   }
@@ -104,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isTestMode = true;
     testModeBtn.classList.add('active');
     learnModeBtn.classList.remove('active');
-    currentPool = [...originalPool].sort(() => 0.5 - Math.random());
+    currentPool = shuffleArray([...originalPool]);
     currentPage = 1;
     renderIdioms();
   });
@@ -115,6 +124,19 @@ document.addEventListener('DOMContentLoaded', () => {
     revealBtn.style.display = 'none';
     const active = idiomGrid.querySelector('.idiom-btn.active');
     if (active) active.textContent = active.dataset.idiom;
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    const active = idiomGrid.querySelector('.idiom-btn.active');
+    if (active) {
+      active.textContent = active.dataset.idiom; // Make sure it's revealed in the list
+      const next = active.nextElementSibling;
+      if (next) {
+        next.click();
+      } else {
+        alert('這組測驗已完成！請點擊上方切換題庫或重整頁面。');
+      }
+    }
   });
 
   // ── Search ─────────────────────────────────────
@@ -133,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bingSearchBtn.classList.toggle('blur-text', isTestMode);
     }
     if (revealBtn) revealBtn.style.display = isTestMode ? 'inline-flex' : 'none';
+    if (nextBtn) nextBtn.style.display = isTestMode ? 'inline-flex' : 'none';
 
     // Build sequence slots with staggered animation
     chars.forEach((char, idx) => {

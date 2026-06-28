@@ -106,10 +106,14 @@
       </a>
     </div>
     <div id="sentenceSequence" class="char-sequence"></div>
-    <div class="reveal-wrap">
+    <div class="reveal-wrap" style="display:flex; gap:12px; justify-content:center;">
       <button id="revealBtn" class="btn btn-accent reveal-btn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         揭開答案
+      </button>
+      <button id="nextBtn" class="btn btn-primary" style="display:none">
+        下一題
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
   </section>
@@ -142,6 +146,6 @@
 </template>
 
 <script src="idioms_data.js"></script>
-<script src="idioms.js?v=4"></script>
+<script src="idioms.js?v=5"></script>
 </body>
 </html>
