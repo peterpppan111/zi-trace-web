@@ -261,7 +261,7 @@ a, button, .interactive {
 
 .char-modern {
   position: absolute;
-  font-family: 'Zhi Mang Xing', 'Noto Serif TC', serif;
+  font-family: 'Kaiti TC', 'BiauKai', 'DFKai-SB', 'KaiTi', 'STKaiti', 'Noto Serif SC', serif;
   font-size: clamp(40px, 9vw, 65px);
   color: #D4AF37;
   background: linear-gradient(135deg, #7A5C22 0%, #D4AF37 35%, #F4E3A6 50%, #B8860B 65%, #664916 100%);
