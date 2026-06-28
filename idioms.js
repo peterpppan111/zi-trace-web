@@ -313,4 +313,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const hasData = ['REVIEW_IDIOMS','SPRINT_IDIOMS','ESSENTIAL_IDIOMS','COMMON_IDIOMS','ALL_IDIOMS']
     .some(k => typeof window[k] !== 'undefined');
   if (hasData) { initPool(); renderIdioms(); }
+
+  // ── Proximity Reveal Logic ─────────────────────
+  const titleChars = document.getElementById('titleChars');
+  if (titleChars) {
+    const containers = titleChars.querySelectorAll('.char-container');
+    document.addEventListener('mousemove', (e) => {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      containers.forEach(container => {
+        const rect = container.getBoundingClientRect();
+        if (rect.width === 0) return; // Hidden elements
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dist = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2));
+        if (dist < 80) { // Reveal threshold radius
+          container.classList.add('revealed');
+        } else {
+          container.classList.remove('revealed');
+        }
+      });
+    });
+  }
 });

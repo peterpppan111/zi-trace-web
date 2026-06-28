@@ -7,6 +7,10 @@
 
 /* ── Tokens ─────────────────────────────────────────────── */
 :root {
+  /* 鼠标全局金圈 */
+  --custom-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='8' fill='rgba(212, 175, 55, 0.2)' stroke='%23D4AF37' stroke-width='2'/%3E%3C/svg%3E") 12 12, auto;
+  --custom-cursor-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='6' fill='%23D4AF37' stroke='%23D4AF37' stroke-width='2'/%3E%3C/svg%3E") 12 12, pointer;
+  
   --bg:            #0A0A0A;
   --surface:       rgba(255, 255, 255, 0.03);
   --surface-2:     rgba(255, 255, 255, 0.06);
@@ -64,6 +68,11 @@ body{
   line-height:1.7;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: var(--custom-cursor);
+}
+
+a, button, .interactive {
+  cursor: var(--custom-cursor-pointer) !important;
 }
 
 /* ── Layout ─────────────────────────────────────────────── */
@@ -223,11 +232,19 @@ body{
   animation: floatBreathe 4s ease-in-out infinite;
 }
 
-/* 烫金质感甲骨文 (Hot-stamped gold oracle bone) */
-.char-wrap {
-  display: inline-block;
+/* 烫金质感甲骨文与现代文字容器 */
+.char-container {
+  position: relative;
   width: clamp(50px, 10vw, 75px);
   height: clamp(50px, 10vw, 75px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.char-bone {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(135deg, #7A5C22 0%, #D4AF37 35%, #F4E3A6 50%, #B8860B 65%, #664916 100%);
   -webkit-mask-image: var(--bg-image);
   -webkit-mask-size: contain;
@@ -238,13 +255,40 @@ body{
   mask-repeat: no-repeat;
   mask-position: center;
   filter: drop-shadow(0 6px 12px rgba(0,0,0,0.85)) drop-shadow(0 0 10px rgba(212, 175, 55, 0.15));
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
-  cursor: default;
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
+  opacity: 1;
 }
 
-.char-wrap:hover {
+.char-modern {
+  position: absolute;
+  font-family: 'Zhi Mang Xing', 'Noto Serif TC', serif;
+  font-size: clamp(40px, 9vw, 65px);
+  color: #D4AF37;
+  background: linear-gradient(135deg, #7A5C22 0%, #D4AF37 35%, #F4E3A6 50%, #B8860B 65%, #664916 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none; /* Let hover trigger on container */
+}
+
+/* Hover effect on the bone (if not revealed) */
+.char-container:hover .char-bone {
   transform: scale(1.15) translateY(-5px);
   filter: drop-shadow(0 12px 18px rgba(0,0,0,0.95)) drop-shadow(0 0 20px rgba(212, 175, 55, 0.4));
+}
+
+/* Revealed state triggered by JS proximity */
+.char-container.revealed .char-bone {
+  opacity: 0;
+  transform: scale(1.2);
+}
+
+.char-container.revealed .char-modern {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .page-subtitle{
