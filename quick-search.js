@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.style.display = 'none';
       input.value = '';
       resultsContainer.innerHTML = '';
-    }, 300); // match CSS transition duration
+    }, 400); // match CSS transition duration
   };
 
   quickSearchBtn.addEventListener('click', openModal);

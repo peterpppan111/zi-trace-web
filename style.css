@@ -865,7 +865,7 @@ a, button, .interactive {
 }
 
 .quick-search-container {
-  width: 100%;
+  width: calc(100% - 32px);
   max-width: 600px;
   background: oklch(15% 0.01 250 / 0.6);
   border: 1px solid oklch(30% 0.01 250 / 0.5);
