@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bingSearchBtn.classList.toggle('blur-text', isTestMode);
     }
     if (revealBtn) revealBtn.style.display = isTestMode ? 'inline-flex' : 'none';
-    if (nextBtn) nextBtn.style.display = isTestMode ? 'inline-flex' : 'none';
+    if (nextBtn) nextBtn.style.display = 'inline-flex';
 
     // Build sequence slots with staggered animation
     chars.forEach((char, idx) => {
