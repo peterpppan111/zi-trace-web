@@ -18,15 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Core Search ──────────────────────────────
   let currentSearchId = 0;
+  let currentAbortController = null;
 
   async function performSearch() {
     const text = searchInput.value.trim();
     if (!text) {
       currentSearchId++; // Cancel pending searches
+      if (currentAbortController) currentAbortController.abort();
       return;
     }
 
     const searchId = ++currentSearchId;
+    if (currentAbortController) currentAbortController.abort();
+    currentAbortController = new AbortController();
+    const signal = currentAbortController.signal;
 
     resultsContainer.innerHTML = '';
     sentenceSequence.innerHTML = '';
@@ -83,11 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    await Promise.allSettled(cardsData.map(d => fetchCharEvolution(d)));
+    await Promise.allSettled(cardsData.map(d => fetchCharEvolution({ ...d, signal })));
   }
 
   // ── Fetch from Proxy ─────────────────────────
-  async function fetchCharEvolution({ char, searchId, container, loading, error, expandBtn }) {
+  async function fetchCharEvolution({ char, searchId, container, loading, error, expandBtn, signal }) {
     try {
       let htmlString;
       if (responseCache.has(char)) {
@@ -98,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: body.toString(),
+          signal
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         htmlString = await res.text();
@@ -149,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSlots(char, null, '無記錄');
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.error(char, err);
       loading.style.display = 'none';
       showError(error, '請求失敗，請稍後再試');

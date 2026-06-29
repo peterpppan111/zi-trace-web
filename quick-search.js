@@ -76,12 +76,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Search Logic
   let debounceTimeout;
   let currentSearchId = 0;
+  let searchAbortController = null;
+  let isComposing = false;
+
+  input.addEventListener('compositionstart', () => { isComposing = true; });
+  input.addEventListener('compositionend', (e) => { 
+    isComposing = false; 
+    triggerSearch(e.target.value.trim()); // Trigger immediately after composition ends
+  });
 
   input.addEventListener('input', (e) => {
-    const char = e.target.value.trim();
+    if (isComposing) return;
+    triggerSearch(e.target.value.trim());
+  });
+
+  function triggerSearch(char) {
     if (!char || char.length !== 1) {
       resultsContainer.innerHTML = '';
       currentSearchId++; // Cancel pending
+      if (searchAbortController) searchAbortController.abort();
       return;
     }
 
@@ -89,10 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
     debounceTimeout = setTimeout(() => {
       performSearch(char);
     }, 300);
-  });
+  }
 
   async function performSearch(char) {
     const searchId = ++currentSearchId;
+    if (searchAbortController) searchAbortController.abort();
+    searchAbortController = new AbortController();
+    const signal = searchAbortController.signal;
+
     resultsContainer.innerHTML = `
       <div class="quick-search-loading">
         <svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>
@@ -114,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: body.toString(),
+          signal
         });
         if (!res.ok) throw new Error('API Error');
         html = await res.text();
@@ -128,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsContainer.innerHTML = `<div class="quick-search-error">字典中未收錄「${char}」字的古文字形。</div>`;
         return;
       }
+
 
       const doc = new DOMParser().parseFromString(html, 'text/html');
       const table = doc.getElementById('yanbian_result');
@@ -161,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsContainer.innerHTML = `<div class="quick-search-error">字典中未收錄「${char}」字的古文字形。</div>`;
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       resultsContainer.innerHTML = `<div class="quick-search-error">查閱失敗，請稍後再試。</div>`;
     }
   }
