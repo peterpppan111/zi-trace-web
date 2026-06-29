@@ -948,7 +948,9 @@ a, button, .interactive {
 
 .quick-search-results {
   flex: 1;
+  min-height: 0; /* CRITICAL: Allows flex child to scroll its own content */
   overflow-y: auto;
+  touch-action: pan-y; /* Explicitly allow vertical panning */
   -webkit-overflow-scrolling: touch; /* Fix for iOS scroll */
   overscroll-behavior: contain; /* Prevents scroll chaining */
   padding: 24px;
