@@ -213,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
     await Promise.allSettled(cardsData.map(d => fetchChar(d)));
   }
 
-  const responseCache = new Map();
   const API_CACHE_NAME = 'zi-trace-api-v1';
 
   async function fetchChar({ char, container, loading, error, expandBtn }) {
