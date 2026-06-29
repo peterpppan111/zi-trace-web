@@ -329,25 +329,86 @@
     attachOptionListeners(item);
   }
 
+  // ── 智能干擾選項生成 ──────────────────────────────────────────
+  // 核心原理：
+  //   單字模式：CJK Unicode 中同部首字碼相近，按碼點距離排序找形近字
+  //   詞組模式：將正確繁體詞中某一字替換為形近繁體字，製造「一字之差」的近似錯誤
+
+  function shuffleArr(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  /** 找與 tradChar 形近的繁體字（按 Unicode 碼點距離排序） */
+  function findSimilarTrad(tradChar, exclude, limit) {
+    if (!exclude) exclude = new Set();
+    if (!limit)   limit   = 8;
+    const code = tradChar.codePointAt(0);
+    return CHAR_DB
+      .map(c => c.trad)
+      .filter(t => t && t.length === 1 && t !== tradChar && !exclude.has(t))
+      .sort((a, b) => Math.abs(a.codePointAt(0) - code) - Math.abs(b.codePointAt(0) - code))
+      .slice(0, limit);
+  }
+
+  /** 單字模式：從形近繁體字中選干擾項（固定選最近的，保證同部首混淆效果） */
+  function buildCharOptions(correct, count) {
+    // 直接取碼點最近的 (count-1) 個作為干擾項——同部首字聚集在相近碼點範圍
+    const distractors = findSimilarTrad(correct, new Set([correct]), count - 1);
+    // 若可選字不足（罕見情況），擴大範圍補全
+    if (distractors.length < count - 1) {
+      const extra = findSimilarTrad(correct, new Set([correct, ...distractors]), count - 1 - distractors.length);
+      distractors.push(...extra);
+    }
+    return shuffleArr([correct, ...distractors.slice(0, count - 1)]);
+  }
+
+  /** 詞組模式：替換繁體詞中一字為形近字，製造一字之差的近似錯誤 */
+  function buildPhraseOptions(item, count) {
+    const correct = item.trad;
+    const chars   = [...correct];
+    const opts    = new Set([correct]);
+
+    const positions = shuffleArr([...Array(chars.length).keys()]);
+
+    for (let pass = 0; pass < 3 && opts.size < count; pass++) {
+      for (const pos of positions) {
+        if (opts.size >= count) break;
+        const target = chars[pos];
+        const similar = shuffleArr(findSimilarTrad(target, new Set(chars), 10));
+        for (const sub of similar) {
+          if (opts.size >= count) break;
+          const candidate = chars.map((c, i) => i === pos ? sub : c).join('');
+          if (candidate !== correct) opts.add(candidate);
+        }
+      }
+    }
+
+    // 若仍不足，補充含相同字的詞（比純隨機更相關）
+    if (opts.size < count) {
+      const fallback = PHRASES
+        .map(p => p.trad)
+        .filter(t => t && t !== correct && !opts.has(t));
+      const scored = fallback.map(t => {
+        let score = 0;
+        for (const ch of chars) { if (t.includes(ch)) score++; }
+        return { t, score };
+      }).sort((a, b) => b.score - a.score);
+      scored.slice(0, count - opts.size).forEach(s => opts.add(s.t));
+    }
+
+    return shuffleArr([...opts].slice(0, count));
+  }
+
   function buildOptions(correctItem, db, field, count) {
     const correct = correctItem[field];
-    const pool    = db
-      .map(it => it[field])
-      .filter(v => v && v !== correct);
-
-    // Shuffle pool
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
+    if (correct.length === 1) {
+      return buildCharOptions(correct, count);
     }
-
-    const opts = [correct, ...pool.slice(0, count - 1)];
-    // Shuffle options
-    for (let i = opts.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [opts[i], opts[j]] = [opts[j], opts[i]];
-    }
-    return opts;
+    return buildPhraseOptions(correctItem, count);
   }
 
   function attachOptionListeners(item) {
