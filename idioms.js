@@ -153,10 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Search ─────────────────────────────────────
   let currentSearchId = 0;
+  let searchAbortController = null;
 
   async function runSearch(text) {
     if (!text) return;
     const searchId = ++currentSearchId;
+    if (searchAbortController) searchAbortController.abort();
+    searchAbortController = new AbortController();
+    const signal = searchAbortController.signal;
+
     resultsContainer.innerHTML = '';
     sentenceSequence.innerHTML = '';
 
@@ -213,12 +218,12 @@ document.addEventListener('DOMContentLoaded', () => {
         expandBtn };
     });
 
-    await Promise.allSettled(cardsData.map(d => fetchChar(d)));
+    await Promise.allSettled(cardsData.map(d => fetchChar({ ...d, signal })));
   }
 
   const API_CACHE_NAME = 'zi-trace-api-v1';
 
-  async function fetchChar({ char, searchId, container, loading, error, expandBtn }) {
+  async function fetchChar({ char, searchId, container, loading, error, expandBtn, signal }) {
     try {
       let html;
       if (responseCache.has(char)) {
@@ -237,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: body.toString(),
+            signal
           });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           html = await res.text();
@@ -283,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showErr(error, '數據庫未收錄此字'); updateSlots(char, null, '無記錄');
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.error(char, err);
       loading.style.display = 'none';
       showErr(error, '請求失敗'); updateSlots(char, null, '加載失敗');
@@ -307,36 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showErr(el, msg) { el.textContent = msg; el.style.display = ''; }
-
-  // ── Share Link ─────────────────────────────────
-  const CURRENT_VERSION = 'v1';
-  const shareBtn = document.getElementById('shareVersionBtn');
-  shareBtn?.addEventListener('click', () => {
-    const origin = window.location.origin;
-    let pathname = window.location.pathname;
-    
-    // 移除現有的版本首碼
-    pathname = pathname.replace(/^\/v\d+/, '');
-    if (!pathname.startsWith('/')) pathname = '/' + pathname;
-    
-    const shareUrl = `${origin}/${CURRENT_VERSION}${pathname}`;
-    
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      const originalText = shareBtn.innerHTML;
-      shareBtn.innerHTML = `
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        已複製！
-      `;
-      shareBtn.classList.add('success');
-      setTimeout(() => {
-        shareBtn.innerHTML = originalText;
-        shareBtn.classList.remove('success');
-      }, 2000);
-    }).catch(err => {
-      console.error('複製失敗:', err);
-      alert('複製連結失敗，請手動複製地址欄鏈接');
-    });
-  });
 
   // ── Init ───────────────────────────────────────
   let hasData = false;
