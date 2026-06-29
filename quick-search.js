@@ -54,14 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let debounceTimeout;
   input.addEventListener('input', (e) => {
     const char = e.target.value.trim();
-    if (!char) {
+    if (!char || char.length !== 1) {
       resultsContainer.innerHTML = '';
-      return;
-    }
-    
-    // Only search single characters
-    if (char.length > 1) {
-      input.value = char.substring(0, 1);
       return;
     }
 
@@ -88,7 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cachedRes) {
         html = await cachedRes.text();
       } else {
-        const res = await fetch(cacheReq);
+        const body = new URLSearchParams({ EudcFontChar: char, ImageSize: '128' });
+        const res = await fetch('/api/proxy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString(),
+        });
         if (!res.ok) throw new Error('API Error');
         html = await res.text();
         if (!html.includes('沒有找到')) {
@@ -101,18 +100,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Inject HTML directly, similar to index.html
-      resultsContainer.innerHTML = html;
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const table = doc.getElementById('yanbian_result');
+
+      resultsContainer.innerHTML = '';
       
-      // Fix image paths returned by the proxy if necessary
-      const imgs = resultsContainer.querySelectorAll('img');
-      imgs.forEach(img => {
-        let src = img.getAttribute('src');
-        if (src && !src.startsWith('http')) {
-           // Ensure correct domain is prefixed if relative
-           img.setAttribute('src', 'https://xiaoxue.iis.sinica.edu.tw' + (src.startsWith('/') ? '' : '/') + src);
-        }
-      });
+      if (table) {
+        table.querySelectorAll('img').forEach(img => {
+          const src = img.getAttribute('src');
+          if (src?.startsWith('/')) {
+            img.src = '/api/proxy-img?url=' + encodeURIComponent(src);
+          }
+        });
+        table.querySelectorAll('td').forEach(td => {
+          if (!td.querySelector('img') && !td.textContent?.trim()) {
+            td.style.display = 'none';
+          }
+        });
+        
+        // Wrap it in char-card for nice formatting
+        const card = document.createElement('div');
+        card.className = 'char-card';
+        card.innerHTML = `<div class="card-char" style="font-size: 2rem; margin-bottom: 12px; color: oklch(90% 0.05 250);">${char}</div>`;
+        const content = document.createElement('div');
+        content.className = 'card-content';
+        content.appendChild(table);
+        card.appendChild(content);
+        
+        resultsContainer.appendChild(card);
+      } else {
+        resultsContainer.innerHTML = `<div class="quick-search-error">字典中未收錄「${char}」字的古文字形。</div>`;
+      }
     } catch (err) {
       resultsContainer.innerHTML = `<div class="quick-search-error">查閱失敗，請稍後再試。</div>`;
     }
