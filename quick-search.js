@@ -7,6 +7,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('quickSearchInput');
   const resultsContainer = document.getElementById('quickSearchResults');
 
+  // ── Global Mouse Tracker for Dynamic Lighting ──
+  let ticking = false;
+  document.addEventListener('mousemove', (e) => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        // We update global variables on the root element
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+        
+        // Update local variables for smart hover cards
+        document.querySelectorAll('.char-card').forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--x', `${x}px`);
+          card.style.setProperty('--y', `${y}px`);
+        });
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
   if (!quickSearchBtn || !modal || !input) return;
 
   const API_CACHE_NAME = 'zi-trace-api-v1';

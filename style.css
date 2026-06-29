@@ -60,8 +60,7 @@ body{
   font-family:var(--font-sans);
   background:var(--bg);
   background-image: 
-    radial-gradient(circle at 15% 50%, rgba(245, 158, 11, 0.04), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.03), transparent 25%);
+    radial-gradient(circle 800px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(79, 168, 155, 0.05), transparent 40%);
   background-attachment: fixed;
   color:var(--ink);
   min-height:100vh;
@@ -676,14 +675,34 @@ a, button, .interactive {
   position: relative;
   overflow: hidden;
 }
+
+/* 智慧發光邊框 (Smart Hover Border) */
 .char-card::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent 50%);
+  content: ''; 
+  position: absolute; 
+  inset: 0; 
+  pointer-events: none;
   border-radius: var(--r-xl);
+  padding: 1px; /* border thickness */
+  background: radial-gradient(
+    circle 250px at var(--x, 50%) var(--y, 50%),
+    rgba(79, 168, 155, 0.8), /* Accent Glow */
+    transparent 40%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  z-index: 10;
 }
+
+.char-card:hover::before {
+  opacity: 1;
+}
+
 .char-card:hover{
-  box-shadow:var(--shadow-lg), 0 0 32px rgba(255,255,255,0.03);
-  border-color:rgba(255,255,255,0.3);
+  box-shadow:var(--shadow-lg), 0 0 32px rgba(79, 168, 155, 0.1);
   transform: translateY(-2px);
 }
 .card-header{
@@ -728,14 +747,16 @@ a, button, .interactive {
 }
 .charValue{
   max-width:64px;height:auto;margin:0 auto 12px;display:block;
-  filter:invert(1) hue-rotate(180deg) brightness(1.2) drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-  transition: transform 0.3s;
+  /* Engraved stone effect: bronze/jade tint with inner shadow illusion */
+  filter: invert(1) sepia(0.3) hue-rotate(130deg) brightness(1.1) contrast(1.2) drop-shadow(1px 1px 1px rgba(255,255,255,0.1)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.8));
+  transition: transform 0.4s var(--ease-elastic), filter 0.4s;
   image-rendering:-webkit-optimize-contrast;
   image-rendering:crisp-edges;
 }
 .VariantListA:hover .charValue, .VariantListB:hover .charValue {
-  transform: scale(1.1);
-  filter:invert(1) hue-rotate(180deg) brightness(1.5) drop-shadow(0 4px 12px rgba(245,158,11,0.4));
+  transform: scale(1.15);
+  /* Glowing pop-out effect on hover */
+  filter: invert(1) sepia(0.2) hue-rotate(130deg) brightness(1.4) drop-shadow(0 8px 16px rgba(79, 168, 155, 0.4)) drop-shadow(0 2px 4px rgba(0,0,0,0.8));
 }
 .Information,.RemindMessage,.ZiList,#StartOrder,
 #yanbian_result tr:has(td[colspan="10"]),
