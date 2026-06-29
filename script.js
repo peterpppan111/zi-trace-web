@@ -17,9 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
   searchBtn.addEventListener('click', performSearch);
 
   // ── Core Search ──────────────────────────────
+  let currentSearchId = 0;
+
   async function performSearch() {
     const text = searchInput.value.trim();
-    if (!text) return;
+    if (!text) {
+      currentSearchId++; // Cancel pending searches
+      return;
+    }
+
+    const searchId = ++currentSearchId;
 
     resultsContainer.innerHTML = '';
     sentenceSequence.innerHTML = '';
@@ -68,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       return {
         char,
+        searchId,
         container: content,
         loading:   card.querySelector('.loading-indicator'),
         error:     card.querySelector('.error-tag'),
@@ -79,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Fetch from Proxy ─────────────────────────
-  async function fetchCharEvolution({ char, container, loading, error, expandBtn }) {
+  async function fetchCharEvolution({ char, searchId, container, loading, error, expandBtn }) {
     try {
       let htmlString;
       if (responseCache.has(char)) {
@@ -95,6 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
         htmlString = await res.text();
         responseCache.set(char, htmlString);
       }
+
+      if (searchId !== currentSearchId) return; // Prevent race conditions
 
       const doc   = new DOMParser().parseFromString(htmlString, 'text/html');
       const table = doc.getElementById('yanbian_result');

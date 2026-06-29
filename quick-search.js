@@ -52,10 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Search Logic
   let debounceTimeout;
+  let currentSearchId = 0;
+
   input.addEventListener('input', (e) => {
     const char = e.target.value.trim();
     if (!char || char.length !== 1) {
       resultsContainer.innerHTML = '';
+      currentSearchId++; // Cancel pending
       return;
     }
 
@@ -66,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function performSearch(char) {
+    const searchId = ++currentSearchId;
     resultsContainer.innerHTML = `
       <div class="quick-search-loading">
         <svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>
@@ -94,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
            cache.put(cacheReq, new Response(html));
         }
       }
+
+      if (searchId !== currentSearchId) return; // Prevent race conditions
 
       if (html.includes('沒有找到')) {
         resultsContainer.innerHTML = `<div class="quick-search-error">字典中未收錄「${char}」字的古文字形。</div>`;

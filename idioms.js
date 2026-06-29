@@ -152,8 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Search ─────────────────────────────────────
+  let currentSearchId = 0;
+
   async function runSearch(text) {
     if (!text) return;
+    const searchId = ++currentSearchId;
     resultsContainer.innerHTML = '';
     sentenceSequence.innerHTML = '';
 
@@ -204,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         expandBtn.textContent = collapsed ? '收起演變表' : '展開完整演變';
       });
 
-      return { char, container: content,
+      return { char, searchId, container: content,
         loading: card.querySelector('.loading-indicator'),
         error:   card.querySelector('.error-tag'),
         expandBtn };
@@ -215,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const API_CACHE_NAME = 'zi-trace-api-v1';
 
-  async function fetchChar({ char, container, loading, error, expandBtn }) {
+  async function fetchChar({ char, searchId, container, loading, error, expandBtn }) {
     try {
       let html;
       if (responseCache.has(char)) {
@@ -242,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         responseCache.set(char, html);
       }
+
+      if (searchId !== currentSearchId) return; // Prevent race condition
 
       const doc   = new DOMParser().parseFromString(html, 'text/html');
       const table = doc.getElementById('yanbian_result');
