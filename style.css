@@ -888,6 +888,7 @@ a, button, .interactive {
 .quick-search-container {
   width: calc(100% - 32px);
   max-width: 600px;
+  max-height: 85vh; /* Constrain modal height to viewport */
   background: oklch(15% 0.01 250 / 0.6);
   border: 1px solid oklch(30% 0.01 250 / 0.5);
   border-radius: 16px;
@@ -910,6 +911,7 @@ a, button, .interactive {
   padding: 20px 24px;
   border-bottom: 1px solid oklch(30% 0.01 250 / 0.5);
   color: oklch(70% 0.02 250);
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .quick-search-input {
@@ -945,10 +947,10 @@ a, button, .interactive {
 }
 
 .quick-search-results {
-  max-height: 60vh;
+  flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Fix for iOS scroll */
   overscroll-behavior: contain; /* Prevents scroll chaining */
-  pointer-events: auto; /* Ensure child elements are interactive */
   padding: 24px;
   display: flex;
   flex-direction: column;
