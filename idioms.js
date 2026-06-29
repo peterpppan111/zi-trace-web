@@ -91,7 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
       tab.classList.add('active');
       currentBank = tab.dataset.bank;
       initPool();
-      renderIdioms();
+      if (document.startViewTransition) {
+        document.startViewTransition(() => renderIdioms());
+      } else {
+        renderIdioms();
+      }
     });
   });
 
@@ -105,7 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
     testModeBtn.classList.remove('active');
     currentPool = [...originalPool];
     currentPage = 1;
-    renderIdioms();
+    if (document.startViewTransition) {
+      document.startViewTransition(() => renderIdioms());
+    } else {
+      renderIdioms();
+    }
   });
 
   testModeBtn?.addEventListener('click', () => {
@@ -115,7 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
     learnModeBtn.classList.remove('active');
     currentPool = shuffleArray([...originalPool]);
     currentPage = 1;
-    renderIdioms();
+    if (document.startViewTransition) {
+      document.startViewTransition(() => renderIdioms());
+    } else {
+      renderIdioms();
+    }
   });
 
   // ── Reveal ─────────────────────────────────────
@@ -201,21 +213,34 @@ document.addEventListener('DOMContentLoaded', () => {
     await Promise.allSettled(cardsData.map(d => fetchChar(d)));
   }
 
-  // ── Fetch ──────────────────────────────────────
+  const responseCache = new Map();
+  const API_CACHE_NAME = 'zi-trace-api-v1';
+
   async function fetchChar({ char, container, loading, error, expandBtn }) {
     try {
       let html;
       if (responseCache.has(char)) {
         html = responseCache.get(char);
       } else {
-        const body = new URLSearchParams({ EudcFontChar: char, ImageSize: '128' });
-        const res  = await fetch('/api/proxy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: body.toString(),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        html = await res.text();
+        // [Performance] Use Persistent Cache API for offline support
+        const cache = await caches.open(API_CACHE_NAME);
+        const cacheReq = new Request(`/api/proxy?char=${encodeURIComponent(char)}`);
+        const cachedRes = await cache.match(cacheReq);
+        
+        if (cachedRes) {
+          html = await cachedRes.text();
+        } else {
+          const body = new URLSearchParams({ EudcFontChar: char, ImageSize: '128' });
+          const res  = await fetch('/api/proxy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString(),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          html = await res.text();
+          // Store in Cache API asynchronously
+          cache.put(cacheReq, new Response(html));
+        }
         responseCache.set(char, html);
       }
 
