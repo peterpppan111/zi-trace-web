@@ -1,0 +1,632 @@
+/* ══════════════════════════════════════════════════════════════
+   繁簡轉換練習 · 補充樣式
+   琥珀金主題色 #D4A853，配合現有深色博物館設計系統
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  --gold:        #D4A853;
+  --gold-2:      #E8C47A;
+  --gold-soft:   rgba(212, 168, 83, 0.15);
+  --gold-glow:   rgba(212, 168, 83, 0.35);
+  --gold-border: rgba(212, 168, 83, 0.25);
+  --correct:     #10B981;
+  --correct-soft: rgba(16, 185, 129, 0.15);
+  --wrong:       #EF4444;
+  --wrong-soft:  rgba(239, 68, 68, 0.15);
+}
+
+/* ── 頁面標題 ───────────────────────────────────────────────── */
+.cvt-title {
+  background: linear-gradient(135deg, var(--gold-2) 0%, var(--gold) 50%, #C49842 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── 模式 Tabs ──────────────────────────────────────────────── */
+.cvt-mode-tabs {
+  display: flex;
+  gap: 8px;
+  max-width: 900px;
+  margin: 0 auto 24px;
+  padding: 0 24px;
+}
+
+.cvt-mode-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--r-md);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  font-family: var(--font-sans);
+  flex: 1;
+  justify-content: center;
+}
+
+.cvt-mode-tab:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+  border-color: var(--gold-border);
+}
+
+.cvt-mode-tab.active {
+  background: var(--gold-soft);
+  border-color: var(--gold-border);
+  color: var(--gold-2);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.cvt-mode-tab svg {
+  opacity: 0.7;
+}
+
+.cvt-tab-count {
+  font-size: 0.75rem;
+  background: rgba(255,255,255,0.08);
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.cvt-mode-tab.active .cvt-tab-count {
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+
+/* ── 控制欄 ────────────────────────────────────────────────── */
+.cvt-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto 20px;
+  padding: 0 24px;
+  flex-wrap: wrap;
+}
+
+.cvt-controls-left {
+  flex: 1;
+}
+
+.cvt-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cvt-filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cvt-chip {
+  padding: 5px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+
+.cvt-chip:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.cvt-chip.active {
+  background: var(--gold-soft);
+  border-color: var(--gold-border);
+  color: var(--gold-2);
+}
+
+/* unseen = accent, wrong = red, mastered = green */
+.cvt-chip[data-filter="wrong"].active {
+  background: var(--red-soft);
+  border-color: rgba(239,68,68,0.3);
+  color: #F87171;
+}
+.cvt-chip[data-filter="mastered"].active {
+  background: var(--green-soft);
+  border-color: rgba(16,185,129,0.3);
+  color: #34D399;
+}
+
+.btn-danger-ghost {
+  color: #F87171;
+  border-color: rgba(239,68,68,0.2);
+}
+.btn-danger-ghost:hover {
+  background: var(--wrong-soft);
+  border-color: rgba(239,68,68,0.4);
+}
+
+/* ── 進度條 ─────────────────────────────────────────────────── */
+.cvt-progress-area {
+  max-width: 900px;
+  margin: 0 auto 28px;
+  padding: 0 24px;
+}
+
+.cvt-progress-bar-wrap {}
+
+.cvt-progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.cvt-progress-badges {
+  display: flex;
+  gap: 10px;
+}
+
+.cvt-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+}
+
+.cvt-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.cvt-badge-dot.mastered { background: var(--correct); }
+.cvt-badge-dot.wrong    { background: var(--wrong); }
+.cvt-badge-dot.unseen   { background: rgba(255,255,255,0.2); }
+
+.cvt-progress-track {
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cvt-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-2) 100%);
+  border-radius: 2px;
+  transition: width 0.5s var(--ease);
+}
+
+/* ── 瀏覽網格（學習模式）────────────────────────────────────── */
+.cvt-grid-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.cvt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+/* Single-char mode: smaller cards */
+.cvt-grid.char-mode {
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+.cvt-item {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--r-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  user-select: none;
+}
+
+.cvt-item:hover {
+  background: var(--surface-2);
+  border-color: var(--gold-border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm), 0 0 16px var(--gold-glow);
+}
+
+/* Status indicators */
+.cvt-item.status-mastered {
+  border-color: rgba(16,185,129,0.25);
+}
+.cvt-item.status-mastered::after {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.65rem;
+  color: var(--correct);
+  font-weight: 700;
+}
+
+.cvt-item.status-wrong {
+  border-color: rgba(239,68,68,0.25);
+}
+.cvt-item.status-wrong::after {
+  content: '✗';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.7rem;
+  color: var(--wrong);
+  font-weight: 700;
+}
+
+.cvt-simp {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.cvt-arrow {
+  font-size: 0.75rem;
+  color: var(--gold);
+  opacity: 0.7;
+}
+
+.cvt-trad {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--gold-2);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+/* Test mode: hide trad by default, show on hover/click */
+.test-mode .cvt-trad {
+  opacity: 0;
+  filter: blur(6px);
+}
+
+.test-mode .cvt-item:hover .cvt-trad,
+.test-mode .cvt-item.revealed .cvt-trad {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.cvt-item-label {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Char mode cards */
+.cvt-item.char-item .cvt-simp {
+  font-size: 2rem;
+}
+
+.cvt-item.char-item .cvt-trad {
+  font-size: 2rem;
+}
+
+.cvt-item.char-item .cvt-alts {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ── 測驗卡片（Flash Card）───────────────────────────────────── */
+.cvt-quiz-section {
+  max-width: 600px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+}
+
+.cvt-card {
+  background: var(--surface);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--r-xl);
+  padding: 48px 40px 40px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: var(--shadow-md), 0 0 40px var(--gold-glow);
+  transition: all 0.3s var(--ease);
+  position: relative;
+}
+
+.cvt-card.correct {
+  border-color: rgba(16,185,129,0.5);
+  box-shadow: var(--shadow-md), 0 0 40px rgba(16,185,129,0.2);
+}
+
+.cvt-card.wrong-ans {
+  border-color: rgba(239,68,68,0.5);
+  box-shadow: var(--shadow-md), 0 0 40px rgba(239,68,68,0.2);
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-5px); }
+  80%       { transform: translateX(5px); }
+}
+
+.cvt-card-prompt {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
+
+.cvt-card-question {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.cvt-card-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+/* Options */
+.cvt-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.cvt-option {
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--r-md);
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+.cvt-option:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--gold-border);
+  transform: translateY(-1px);
+}
+
+.cvt-option.opt-correct {
+  background: var(--correct-soft);
+  border-color: rgba(16,185,129,0.5);
+  color: #34D399;
+}
+
+.cvt-option.opt-wrong {
+  background: var(--wrong-soft);
+  border-color: rgba(239,68,68,0.4);
+  color: #F87171;
+}
+
+.cvt-option:disabled {
+  cursor: default;
+}
+
+/* Feedback row */
+.cvt-feedback {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  min-height: 28px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cvt-feedback.correct { color: #34D399; }
+.cvt-feedback.wrong   { color: #F87171; }
+
+/* Mark buttons */
+.cvt-mark-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cvt-mark-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.18s;
+  font-family: var(--font-sans);
+}
+
+.cvt-mark-known {
+  background: var(--correct-soft);
+  border-color: rgba(16,185,129,0.3);
+  color: #34D399;
+}
+.cvt-mark-known:hover {
+  background: rgba(16,185,129,0.25);
+}
+
+.cvt-mark-flag {
+  background: var(--wrong-soft);
+  border-color: rgba(239,68,68,0.3);
+  color: #F87171;
+}
+.cvt-mark-flag:hover {
+  background: rgba(239,68,68,0.2);
+}
+
+/* Card nav */
+.cvt-card-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.cvt-card-counter {
+  font-size: 0.85rem;
+  color: var(--muted);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ── 空狀態 ─────────────────────────────────────────────────── */
+.cvt-empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--muted);
+}
+
+.cvt-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+/* ── 測驗總結 ────────────────────────────────────────────────── */
+.cvt-summary {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.cvt-summary-inner {
+  background: var(--surface-2);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--r-xl);
+  padding: 48px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow-lg), 0 0 60px var(--gold-glow);
+}
+
+.cvt-summary-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+}
+
+.cvt-summary-inner h2 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  color: var(--gold-2);
+  margin-bottom: 28px;
+}
+
+.cvt-summary-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.cvt-stat {
+  background: var(--surface);
+  border-radius: var(--r-md);
+  padding: 16px 12px;
+  border: 1px solid var(--border-glass);
+}
+
+.cvt-stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  margin-bottom: 4px;
+}
+
+.cvt-stat-num.green { color: #34D399; }
+.cvt-stat-num.red   { color: #F87171; }
+.cvt-stat-num.gold  { color: var(--gold-2); }
+
+.cvt-stat-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.cvt-summary-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ── 響應式 ─────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cvt-mode-tabs {
+    padding: 0 16px;
+  }
+  .cvt-controls {
+    padding: 0 16px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cvt-grid-section {
+    padding: 0 16px 60px;
+  }
+  .cvt-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  .cvt-grid.char-mode {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  .cvt-card {
+    padding: 32px 24px 28px;
+  }
+  .cvt-card-question {
+    font-size: 2.8rem;
+  }
+  .cvt-options {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cvt-option {
+    font-size: 1.2rem;
+    padding: 12px;
+  }
+  .cvt-summary-stats {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
