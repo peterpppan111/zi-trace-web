@@ -171,14 +171,14 @@
 
 <script src="idioms_data.js"></script>
 <script src="idioms.js?v=7"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(err => {
-        console.log('Service Worker registration failed: ', err);
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
       });
-    });
-  }
-</script>
+    }
+  </script>
 </body>
 </html>
