@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Open Modal
   const openModal = () => {
     modal.style.display = 'flex';
+    input.focus();
     // Small delay to allow display:flex to apply before adding class for transition
     requestAnimationFrame(() => {
       modal.classList.add('visible');
-      input.focus();
     });
   };
 

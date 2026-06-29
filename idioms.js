@@ -334,9 +334,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── Init ───────────────────────────────────────
-  const hasData = ['REVIEW_IDIOMS','SPRINT_IDIOMS','ESSENTIAL_IDIOMS','COMMON_IDIOMS','ALL_IDIOMS']
-    .some(k => typeof window[k] !== 'undefined');
-  if (hasData) { initPool(); renderIdioms(); }
+  let hasData = false;
+  try {
+    hasData = typeof REVIEW_IDIOMS !== 'undefined' || typeof COMMON_IDIOMS !== 'undefined';
+  } catch(e) {
+    console.error('Data not loaded', e);
+  }
+  
+  if (hasData) { 
+    initPool(); 
+    renderIdioms(); 
+  }
 
   // ── Proximity Reveal Logic ─────────────────────
   const titleChars = document.getElementById('titleChars');
