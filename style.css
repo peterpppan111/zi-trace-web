@@ -947,6 +947,8 @@ a, button, .interactive {
 .quick-search-results {
   max-height: 60vh;
   overflow-y: auto;
+  overscroll-behavior: contain; /* Prevents scroll chaining */
+  pointer-events: auto; /* Ensure child elements are interactive */
   padding: 24px;
   display: flex;
   flex-direction: column;

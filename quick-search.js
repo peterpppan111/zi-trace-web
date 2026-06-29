@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Open Modal
   const openModal = () => {
     modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Lock background scroll
     input.focus();
     // Small delay to allow display:flex to apply before adding class for transition
     requestAnimationFrame(() => {
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close Modal
   const closeModal = () => {
     modal.classList.remove('visible');
+    document.body.style.overflow = ''; // Unlock background scroll
     setTimeout(() => {
       modal.style.display = 'none';
       input.value = '';
