@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zi-trace-static-v1';
+const CACHE_NAME = 'zi-trace-static-v2';
 const API_CACHE_NAME = 'zi-trace-api-v1';
 
 const ASSETS_TO_CACHE = [
@@ -16,10 +16,13 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+      return Promise.allSettled(
+        ASSETS_TO_CACHE.map(url => cache.add(url).catch(err => console.warn('Cache fail:', url)))
+      );
+    })
   );
 });
 
@@ -38,24 +41,33 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   
   const url = new URL(event.request.url);
-  // Skip proxy API and extension schemes
   if (url.pathname.startsWith('/api/') || url.protocol === 'chrome-extension:') return;
 
   event.respondWith(
-    caches.match(event.request).then(response => {
-      // Stale-while-revalidate strategy for static assets
+    caches.match(event.request).then(cachedResponse => {
       const fetchPromise = fetch(event.request).then(networkResponse => {
-        if (networkResponse.ok) {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, networkResponse.clone());
+            cache.put(event.request, responseToCache);
           });
         }
         return networkResponse;
       }).catch(err => {
-        console.log('Fetch failed, serving from cache only:', err);
+        console.log('Network fetch failed:', err);
+        throw err;
       });
 
-      return response || fetchPromise;
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      return fetchPromise.catch(err => {
+        if (event.request.mode === 'navigate') {
+          return caches.match('/index.html').then(idx => idx || new Response('Offline', {status: 503}));
+        }
+        return new Response('', { status: 408 });
+      });
     })
   );
 });
