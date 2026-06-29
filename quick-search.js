@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Open Modal
   const openModal = () => {
-    modal.style.display = 'flex';
+    modal.style.display = 'block';
     document.documentElement.style.overflow = 'hidden'; // Lock html scroll (vital for iOS)
     document.body.style.overflow = 'hidden'; // Lock body scroll
     input.focus();
