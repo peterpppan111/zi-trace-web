@@ -61,6 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentSearchId = 0;
   let currentAbortController = null;
 
+  // ── URL Param Auto-Search (?q=XXX) ──────────
+  (function checkUrlParam() {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    if (q) {
+      searchInput.value = decodeURIComponent(q);
+      // 等 DOM 完全穩定後再搜索
+      requestAnimationFrame(() => performSearch());
+    }
+  })();
+
   async function performSearch() {
     const text = searchInput.value.trim();
     if (!text) {
@@ -99,6 +110,15 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="modern-char">${char}</div>
       `;
       sentenceSequence.appendChild(slot);
+
+      // ── 點擊跳轉：前往字形查詢深度探索 ──────────────
+      slot.title = `點擊在字形查詢中深入探索「${char}」`;
+      slot.addEventListener('click', () => {
+        // 若已在 index 頁，則直接觸發搜索
+        searchInput.value = char;
+        performSearch();
+        slot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
     });
 
     const uniqueChars = [...new Set(originalChars)];

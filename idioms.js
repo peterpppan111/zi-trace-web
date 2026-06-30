@@ -191,6 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="modern-char${isTestMode ? ' blur-text' : ''}">${char}</div>
       `;
       sentenceSequence.appendChild(slot);
+
+      // ── 跨頁探索：點擊古字形 → 跳到字形查詢頁深入研究 ──
+      slot.title = `點擊在「字形查詢」中深入探索「${char}」的完整演變`;
+      slot.addEventListener('click', () => {
+        window.open(`index.html?q=${encodeURIComponent(char)}`, '_blank');
+      });
     });
 
     const uniqueChars = [...new Set(chars)];
