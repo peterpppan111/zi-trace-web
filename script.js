@@ -16,6 +16,47 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   searchBtn.addEventListener('click', performSearch);
 
+  // ── Typewriter Placeholder ────────────────────
+  const placeholderExamples = [
+    '自強不息', '天下為公', '知行合一',
+    '格物致知', '厚德載物', '民為貴', '山河歲月',
+  ];
+  let twIndex = 0, twCharIndex = 0, twDeleting = false, twTimer = null;
+
+  function typewriterStep() {
+    if (document.activeElement === searchInput) {
+      // 用戶正在輸入時暫停，等待失焦後繼續
+      twTimer = setTimeout(typewriterStep, 500);
+      return;
+    }
+    const target = '例如：' + placeholderExamples[twIndex];
+    if (!twDeleting) {
+      twCharIndex++;
+      searchInput.placeholder = target.slice(0, twCharIndex);
+      if (twCharIndex >= target.length) {
+        twDeleting = true;
+        twTimer = setTimeout(typewriterStep, 2000); // 停留 2s
+        return;
+      }
+    } else {
+      twCharIndex--;
+      searchInput.placeholder = target.slice(0, twCharIndex);
+      if (twCharIndex <= 0) {
+        twDeleting = false;
+        twIndex = (twIndex + 1) % placeholderExamples.length;
+        twTimer = setTimeout(typewriterStep, 400);
+        return;
+      }
+    }
+    twTimer = setTimeout(typewriterStep, twDeleting ? 40 : 80);
+  }
+  // 延遲 1s 後開始，避免搶奪首屏注意力
+  twTimer = setTimeout(typewriterStep, 1000);
+  searchInput.addEventListener('focus', () => { searchInput.placeholder = ''; });
+  searchInput.addEventListener('blur',  () => {
+    if (!searchInput.value) { twCharIndex = 0; twDeleting = false; typewriterStep(); }
+  });
+
   // ── Core Search ──────────────────────────────
   let currentSearchId = 0;
   let currentAbortController = null;

@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="convert.css?v=1">
+  <link rel="stylesheet" href="convert.css?v=2">
 </head>
 <body>
 <main class="app">
@@ -44,6 +44,12 @@
     <span>✦</span>
     <span class="notice-text">數據來源：武漢大學文學院古代漢語教學團隊整理（易錯繁簡字），以及附錄三：部分簡化字與繁體字對照表。</span>
     <button class="notice-close" onclick="this.parentElement.remove()">×</button>
+  </div>
+
+  <!-- 歡迎回來橫幅（有進度才顯示） -->
+  <div class="cvt-welcome-banner" id="welcomeBanner" style="display:none;">
+    <span class="cvt-welcome-icon">👋</span>
+    <span class="cvt-welcome-text" id="welcomeText"></span>
   </div>
 
   <!-- Mode Tabs -->

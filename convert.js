@@ -67,9 +67,47 @@
 
   function init() {
     loadProgress();
+    showWelcomeBanner();
     setupEventListeners();
     switchMode('phrase');
     updateTabCounts();
+  }
+
+  function showWelcomeBanner() {
+    // 統計兩個 DB 的掌握數
+    let phraseMastered = 0, charMastered = 0;
+    PHRASES.forEach(item => {
+      const key = item.simp + '→' + item.trad;
+      const p = phraseProgress[key];
+      if (p && (p.status === 'mastered' || p.status === 'known')) phraseMastered++;
+    });
+    CHAR_DB.forEach(item => {
+      const key = item.simp;
+      const p = charProgress[key];
+      if (p && (p.status === 'mastered' || p.status === 'known')) charMastered++;
+    });
+
+    const total = phraseMastered + charMastered;
+    if (total === 0) return; // 新用戶，不顯示
+
+    const banner = document.getElementById('welcomeBanner');
+    const text   = document.getElementById('welcomeText');
+    if (!banner || !text) return;
+
+    const parts = [];
+    if (phraseMastered > 0) parts.push(`<strong>${phraseMastered} 組詞</strong>`);
+    if (charMastered   > 0) parts.push(`<strong>${charMastered} 個字</strong>`);
+
+    text.innerHTML = `歡迎回來！你已掌握 ${parts.join(' 和 ')}，繼續加油 💪`;
+    banner.style.display = 'flex';
+
+    // 8 秒後自動淡出
+    setTimeout(() => {
+      banner.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+      banner.style.opacity = '0';
+      banner.style.transform = 'translateY(-8px)';
+      setTimeout(() => banner.remove(), 800);
+    }, 8000);
   }
 
   function setupEventListeners() {

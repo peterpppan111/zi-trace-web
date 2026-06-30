@@ -630,3 +630,43 @@
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   繁簡轉換頁：金色主題覆蓋（優先於 style.css 翠玉主題）
+   ══════════════════════════════════════════════════════════════ */
+
+/* 標題裝飾分隔線 → 琥珀金 */
+.page-header::after {
+  background: linear-gradient(90deg, transparent, var(--gold), var(--gold-2), transparent);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+/* Notice Banner → 琥珀金 */
+.notice-banner {
+  background: linear-gradient(to right, var(--gold-soft), rgba(212, 168, 83, 0.04));
+  border: 1px solid var(--gold-border);
+  border-left: 4px solid var(--gold);
+}
+
+/* ── 歡迎回來提示橫幅 ───────────────────────────────────────── */
+.cvt-welcome-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto 20px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--gold-soft), rgba(212, 168, 83, 0.06));
+  border: 1px solid var(--gold-border);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  color: var(--gold-2);
+  animation: fadeUp 0.5s var(--ease) both;
+}
+.cvt-welcome-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.cvt-welcome-text strong {
+  color: var(--gold);
+}

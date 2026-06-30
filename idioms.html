@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -159,6 +159,7 @@
     <div class="card-header">
       <h2 class="card-char"></h2>
       <div class="card-controls">
+        <div class="era-count-badge" style="display:none;"></div>
         <div class="loading-indicator">
           <div class="spinner"></div>
           <span>查詢中…</span>
@@ -170,6 +171,7 @@
     <div class="card-content"></div>
   </div>
 </template>
+
 
   <!-- Global Quick Search Modal -->
   <div id="quickSearchModal" class="quick-search-overlay" style="display: none;">

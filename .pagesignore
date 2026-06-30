@@ -1,0 +1,10 @@
+# Cloudflare Pages 部署排除清單
+# 開發用腳本，不需要部署到生產環境
+
+fetch_images.py
+fix_images.py
+process_images.py
+*.py
+
+# 開發調試文件
+test_*.html
