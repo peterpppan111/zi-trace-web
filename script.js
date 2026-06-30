@@ -135,6 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
           container.appendChild(table);
           expandBtn.style.display = '';
 
+          // ── 時代計數徽章 ────────────────────────────────────
+          const eraBadge = container.closest('.char-card')?.querySelector('.era-count-badge');
+          if (eraBadge) {
+            // 統計有效字形圖片數量
+            const imgCount = table.querySelectorAll('img.charValue').length;
+            if (imgCount > 0) {
+              eraBadge.innerHTML = `<span class="era-pill">${imgCount} 個字形</span>`;
+              eraBadge.style.display = 'flex';
+            }
+          }
+
           const firstCell = Array.from(
             table.querySelectorAll('td.VariantListA, td.VariantListB')
           ).find(td => td.querySelector('img') && td.style.display !== 'none');
@@ -150,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
           showError(error, '暫無該字的演變圖形');
           updateSlots(char, null, '暫無');
         }
+
       } else {
         showError(error, '數據庫中未找到該字');
         updateSlots(char, null, '無記錄');

@@ -308,23 +308,23 @@ a, button, .interactive {
 .btn-primary{
   background:linear-gradient(135deg, var(--accent), var(--accent-2));
   color:#000;border:none;
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 16px rgba(79, 168, 155, 0.35);
 }
 .btn-primary:hover{
-  background:linear-gradient(135deg, var(--accent-2), #FDE68A);
+  background:linear-gradient(135deg, var(--accent-2), #A8DED6);
   color:#000;
-  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5);
+  box-shadow: 0 8px 24px rgba(79, 168, 155, 0.5);
 }
 .btn-accent{
-  background:rgba(245,158,11,0.15);
+  background: var(--accent-soft);
   color:var(--accent);
-  border: 1px solid rgba(245,158,11,0.3);
+  border: 1px solid rgba(79, 168, 155, 0.3);
 }
 .btn-accent:hover{
-  background:rgba(245,158,11,0.25);
+  background: rgba(79, 168, 155, 0.22);
   border-color: var(--accent);
   color:var(--accent-2);
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 16px var(--accent-glow);
 }
 .btn-sm{height:36px;padding:0 16px;font-size:13px;border-radius:var(--r-sm);}
 .btn-ghost{background:transparent;border-color:transparent;box-shadow:none;color:var(--muted);}
@@ -435,7 +435,7 @@ a, button, .interactive {
   font-size:13px;color:var(--accent);
   background:var(--accent-soft);
   padding:4px 12px;border-radius:12px;
-  border: 1px solid rgba(245,158,11,0.2);
+  border: 1px solid rgba(79, 168, 155, 0.25);
 }
 .controls-right{display:flex;gap:12px;align-items:center;}
 
@@ -509,19 +509,45 @@ a, button, .interactive {
 .idiom-btn:hover{
   border-color:var(--accent);
   transform:translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.4), 0 0 16px rgba(245,158,11,0.2);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.4), 0 0 16px var(--accent-glow);
   color:#FFF;
 }
 .idiom-btn:hover::before{opacity:1;}
 .idiom-btn.active{
-  background:linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.05));
+  background:linear-gradient(135deg, var(--accent-soft), rgba(79,168,155,0.05));
   color:#FFF;
   border-color:var(--accent);
-  box-shadow: 0 0 24px rgba(245,158,11,0.3);
+  box-shadow: 0 0 24px var(--accent-glow);
   transform:translateY(-2px);
 }
 .idiom-btn.active::after {
   content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--accent);
+}
+
+/* ── Page Title (jade gradient) ───────────────────────────── */
+.page-title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 55%, #3A8A80 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+}
+
+/* 標題裝飾分隔線 */
+.page-header::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 1px;
+  margin: 20px auto 0;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-2), transparent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  border-radius: 1px;
 }
 
 /* ── Preview Section ────────────────────────────────────── */
@@ -551,8 +577,12 @@ a, button, .interactive {
   gap:24px;flex-wrap:wrap;
 }
 .preview-header-left h3{
-  font-size:22px;font-weight:600;color:#FFF;margin-bottom:8px;
+  font-size:22px;font-weight:600;margin-bottom:8px;
   letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .preview-subtitle{
   font-size:14px;color:var(--muted);
@@ -575,14 +605,16 @@ a, button, .interactive {
 .seq-char .ancient-img{
   height:96px;width:auto;max-width:96px;
   object-fit:contain;
-  filter:drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4)) invert(1) hue-rotate(180deg) brightness(1.2);
+  filter: invert(1) sepia(0.2) hue-rotate(150deg) brightness(1.2) contrast(1.1)
+          drop-shadow(0 4px 12px rgba(79, 168, 155, 0.5));
   transition:all 0.4s var(--ease-elastic);
   image-rendering:-webkit-optimize-contrast;
   image-rendering:crisp-edges;
 }
 .seq-char:hover .ancient-img{
   transform:scale(1.15) translateY(-8px);
-  filter:drop-shadow(0 8px 24px rgba(245, 158, 11, 0.6)) invert(1) hue-rotate(180deg) brightness(1.5);
+  filter: invert(1) sepia(0.15) hue-rotate(150deg) brightness(1.5) contrast(1.15)
+          drop-shadow(0 10px 28px rgba(79, 168, 155, 0.7));
 }
 .seq-char .ancient-img-placeholder{
   height:96px;width:96px;
@@ -595,7 +627,7 @@ a, button, .interactive {
   font-size:11px;color:var(--accent);
   text-align:center;max-width:90px;line-height:1.4;
   background:var(--accent-soft);padding:4px 10px;border-radius:12px;
-  border: 1px solid rgba(245,158,11,0.2);
+  border: 1px solid rgba(79, 168, 155, 0.2);
   letter-spacing: 0.5px;
 }
 .seq-char .modern-char{
@@ -643,6 +675,17 @@ a, button, .interactive {
   overflow: hidden;
 }
 
+/* 頂部翠玉光條 */
+.char-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent-2), transparent);
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease);
+}
+.char-card:hover::after { opacity: 1; }
+
 /* 智慧發光邊框 (Smart Hover Border) */
 .char-card::before {
   content: ''; 
@@ -650,10 +693,10 @@ a, button, .interactive {
   inset: 0; 
   pointer-events: none;
   border-radius: var(--r-xl);
-  padding: 1px; /* border thickness */
+  padding: 1px;
   background: radial-gradient(
     circle 250px at var(--x, 50%) var(--y, 50%),
-    rgba(79, 168, 155, 0.8), /* Accent Glow */
+    rgba(79, 168, 155, 0.8),
     transparent 40%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -664,12 +707,10 @@ a, button, .interactive {
   z-index: 10;
 }
 
-.char-card:hover::before {
-  opacity: 1;
-}
+.char-card:hover::before { opacity: 1; }
 
 .char-card:hover{
-  box-shadow:var(--shadow-lg), 0 0 32px rgba(79, 168, 155, 0.1);
+  box-shadow:var(--shadow-lg), 0 0 32px rgba(79, 168, 155, 0.12);
   transform: translateY(-2px);
 }
 .card-header{
@@ -679,9 +720,13 @@ a, button, .interactive {
 }
 .card-char{
   font-family: var(--font-serif);
-  font-size:56px;font-weight:700;color:#FFF;
+  font-size:56px;font-weight:700;
   line-height:1;letter-spacing:-0.02em;
-  text-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 55%, #3A8A80 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
 }
 .card-controls{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .card-content{overflow-x:auto;border-radius:var(--r-md); padding-bottom: 8px;}
@@ -700,8 +745,14 @@ a, button, .interactive {
   border-radius:var(--r-md);font-size:14px;
   color:var(--ink-2);line-height:1.6;
 }
-.VariantListA,.VariantListB{
-  background:rgba(0,0,0,0.4);
+.VariantListA {
+  background: rgba(79, 168, 155, 0.05);
+  border:1px solid var(--line) !important;
+  transition:all 0.3s var(--ease-elastic);
+  position: relative;
+}
+.VariantListB {
+  background: rgba(0,0,0,0.45);
   border:1px solid var(--line) !important;
   transition:all 0.3s var(--ease-elastic);
   position: relative;
@@ -709,27 +760,61 @@ a, button, .interactive {
 .VariantListA:hover,.VariantListB:hover{
   border-color:var(--accent) !important;
   transform:translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(245,158,11,0.2);
-  background:rgba(245,158,11,0.05);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(79,168,155,0.25);
+  background: rgba(79, 168, 155, 0.08);
 }
 .charValue{
   max-width:64px;height:auto;margin:0 auto 12px;display:block;
-  /* Engraved stone effect: bronze/jade tint with inner shadow illusion */
-  filter: invert(1) sepia(0.3) hue-rotate(130deg) brightness(1.1) contrast(1.2) drop-shadow(1px 1px 1px rgba(255,255,255,0.1)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.8));
+  /* 統一翠玉石刻質感 */
+  filter: invert(1) sepia(0.2) hue-rotate(150deg) brightness(1.2) contrast(1.15)
+          drop-shadow(0 2px 4px rgba(0,0,0,0.7));
   transition: transform 0.4s var(--ease-elastic), filter 0.4s;
   image-rendering:-webkit-optimize-contrast;
   image-rendering:crisp-edges;
 }
 .VariantListA:hover .charValue, .VariantListB:hover .charValue {
   transform: scale(1.15);
-  /* Glowing pop-out effect on hover */
-  filter: invert(1) sepia(0.2) hue-rotate(130deg) brightness(1.4) drop-shadow(0 8px 16px rgba(79, 168, 155, 0.4)) drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+  filter: invert(1) sepia(0.15) hue-rotate(150deg) brightness(1.5)
+          drop-shadow(0 8px 20px rgba(79, 168, 155, 0.55))
+          drop-shadow(0 2px 4px rgba(0,0,0,0.8));
 }
 .Information,.RemindMessage,.ZiList,#StartOrder,
 #yanbian_result tr:has(td[colspan="10"]),
 #yanbian_result td[colspan="10"]{display:none !important;}
 #yanbian_result br{display:block;margin-top:6px;}
 #yanbian_result td:empty{display:none;}
+
+/* ── 時代計數徽章 ────────────────────────────────────────── */
+.era-count-badge {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.era-pill {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(79, 168, 155, 0.2);
+  color: var(--accent-2);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ── 空狀態樣式 ──────────────────────────────────────────── */
+.char-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 0;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+.char-empty-state svg { opacity: 0.3; }
 
 /* ── Loading & Error ─────────────────────────────────────── */
 .loading-indicator{
@@ -738,7 +823,7 @@ a, button, .interactive {
 }
 .spinner{
   width:16px;height:16px;
-  border:2px solid rgba(245,158,11,0.2);
+  border:2px solid rgba(79, 168, 155, 0.2);
   border-top-color:var(--accent);
   border-radius:50%;
   animation:spin 0.8s linear infinite;flex-shrink:0;
@@ -757,8 +842,8 @@ a, button, .interactive {
 .notice-banner{
   display:flex;align-items:flex-start;gap:12px;
   padding:16px 20px;
-  background:linear-gradient(to right, rgba(245,158,11,0.1), rgba(245,158,11,0.05));
-  border:1px solid rgba(245,158,11,0.2);
+  background:linear-gradient(to right, rgba(79, 168, 155, 0.1), rgba(79, 168, 155, 0.04));
+  border:1px solid rgba(79, 168, 155, 0.2);
   border-left: 4px solid var(--accent);
   border-radius:var(--r-md);
   margin-bottom:36px;
