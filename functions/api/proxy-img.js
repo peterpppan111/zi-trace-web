@@ -15,12 +15,13 @@ export async function onRequestGet(context) {
     const upstreamRes = await fetch(`https://xiaoxue.iis.sinica.edu.tw${targetUrl}`, {
       headers: {
         'Referer': 'https://xiaoxue.iis.sinica.edu.tw/yanbian',
-        'User-Agent': 'Mozilla/5.0 (compatible; ZiTrace/1.0; +https://zi-trace-web.pages.dev)'
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       }
     });
 
-    // 將上游的標頭複製過來，並加上 CORS 與強快取
-    const responseHeaders = new Headers(upstreamRes.headers);
+    // 只複製必要的 Content-Type，避免其他 header (如 CSP, Content-Length) 在移動端產生相容性問題
+    const responseHeaders = new Headers();
+    responseHeaders.set('Content-Type', upstreamRes.headers.get('Content-Type') || 'image/png');
     responseHeaders.set('Access-Control-Allow-Origin', '*');
     responseHeaders.set('Cache-Control', 'public, max-age=31536000, immutable'); // 快取一年
 

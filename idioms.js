@@ -267,10 +267,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (table) {
         let count = 0;
         table.querySelectorAll('img').forEach(img => {
-          const src = img.getAttribute('src');
-          if (src?.startsWith('/')) {
-            img.src = '/api/proxy-img?url=' + encodeURIComponent(src);
-            count++;
+          let src = img.getAttribute('src');
+          if (src) {
+            if (src.startsWith('http')) {
+              try { src = new URL(src).pathname + new URL(src).search; } catch(e) {}
+            }
+            if (src.startsWith('/')) {
+              img.src = '/api/proxy-img?url=' + encodeURIComponent(src);
+              count++;
+            }
           }
         });
         table.querySelectorAll('td').forEach(td => {
