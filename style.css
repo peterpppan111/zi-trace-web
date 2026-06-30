@@ -173,6 +173,30 @@ a, button, .interactive {
   padding-top: 8px; /* 統一上邊距 */
 }
 
+/* ── 返回按鈕（從其他頁面跳轉來時顯示） ─────────────────── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: all 0.25s var(--ease);
+}
+.back-link:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-2);
+  transform: translateX(-3px);
+}
+
 /* era-depth 微差異：用左邊框色而非背景色，避免顏色突兀 */
 .VariantListA { border-left: 3px solid rgba(79, 168, 155, 0.35) !important; }
 .VariantListB { border-left: 3px solid rgba(79, 168, 155, 0.12) !important; }
@@ -624,8 +648,9 @@ a, button, .interactive {
 .seq-char .ancient-img{
   height:96px;width:auto;max-width:96px;
   object-fit:contain;
-  /* 同樣的高對比前置，消除白色/米白背景 */
-  filter: contrast(1.8) invert(1) brightness(1.15) contrast(1.1)
+  /* 同 charValue：screen 模式消除背景差異 */
+  mix-blend-mode: screen;
+  filter: contrast(2) invert(1) brightness(1.1)
           drop-shadow(0 4px 14px rgba(79, 168, 155, 0.45));
   transition:all 0.4s var(--ease-elastic);
   image-rendering:-webkit-optimize-contrast;
@@ -633,7 +658,7 @@ a, button, .interactive {
 }
 .seq-char:hover .ancient-img{
   transform:scale(1.15) translateY(-8px);
-  filter: contrast(1.8) invert(1) brightness(1.5) contrast(1.1)
+  filter: contrast(2) invert(1) brightness(1.5)
           drop-shadow(0 12px 32px rgba(79, 168, 155, 0.7));
 }
 .seq-char .ancient-img-placeholder{
@@ -766,37 +791,47 @@ a, button, .interactive {
   color:var(--ink-2);line-height:1.6;
 }
 .VariantListA {
-  background: rgba(12, 16, 28, 0.85);
-  border:1px solid var(--line) !important;
-  transition:all 0.3s var(--ease-elastic);
+  /* 石碑深邃感：由中心微亮向邊緣漸暗的徑向漸層 */
+  background: radial-gradient(ellipse at 50% 35%, #181c2c 0%, #0a0c16 70%);
+  border: 1px solid rgba(79, 168, 155, 0.12) !important;
+  border-left: 3px solid rgba(79, 168, 155, 0.35) !important;
+  transition: all 0.3s var(--ease-elastic);
   position: relative;
 }
 .VariantListB {
-  background: rgba(8, 10, 20, 0.92);
-  border:1px solid var(--line) !important;
-  transition:all 0.3s var(--ease-elastic);
+  /* A 基礎上偏向深墨色，製造微差 */
+  background: radial-gradient(ellipse at 50% 35%, #12141e 0%, #070810 70%);
+  border: 1px solid rgba(79, 168, 155, 0.08) !important;
+  border-left: 3px solid rgba(79, 168, 155, 0.15) !important;
+  transition: all 0.3s var(--ease-elastic);
   position: relative;
 }
 .VariantListA:hover,.VariantListB:hover{
-  border-color:var(--accent) !important;
-  transform:translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(79,168,155,0.25);
-  background: rgba(79, 168, 155, 0.08);
+  border-color: var(--accent) !important;
+  border-left-color: var(--accent) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(79,168,155,0.2);
+  background: radial-gradient(ellipse at 50% 35%, rgba(79,168,155,0.12) 0%, rgba(10,12,22,0.98) 70%);
 }
 .charValue{
-  max-width:64px;height:auto;margin:0 auto 12px;display:block;
-  /* contrast(1.8) 前置：將灰色/米白背景壓成純白，invert 後完全黑化融入深色卡片 */
-  filter: contrast(1.8) invert(1) brightness(1.1) contrast(1.2)
-          drop-shadow(0 2px 6px rgba(0,0,0,0.8));
+  max-width: 64px; height: auto; margin: 0 auto 12px; display: block;
+  /* mix-blend-mode: screen 原理：
+     invert(1) 將白背景 → 黑(0)，字形 → 白(255)
+     screen 模式下：黑(0)像素完全透明，顯示卡片背景
+     白(255)像素完全不透明，顯示字形筆劃
+     效果：所有圖片背景色差一次性消除 */
+  mix-blend-mode: screen;
+  filter: contrast(2) invert(1) brightness(1.08);
   transition: transform 0.4s var(--ease-elastic), filter 0.4s;
-  image-rendering:-webkit-optimize-contrast;
-  image-rendering:crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 .VariantListA:hover .charValue, .VariantListB:hover .charValue {
   transform: scale(1.15);
-  filter: contrast(1.8) invert(1) brightness(1.4) contrast(1.15)
-          drop-shadow(0 8px 24px rgba(79, 168, 155, 0.6))
-          drop-shadow(0 2px 6px rgba(0,0,0,0.9));
+  /* hover 時加強亮度 + 翠玉發光 */
+  filter: contrast(2) invert(1) brightness(1.5)
+          drop-shadow(0 0 12px rgba(79, 168, 155, 0.7))
+          drop-shadow(0 4px 16px rgba(79, 168, 155, 0.4));
 }
 .Information,.RemindMessage,.ZiList,#StartOrder,
 #yanbian_result tr:has(td[colspan="10"]),

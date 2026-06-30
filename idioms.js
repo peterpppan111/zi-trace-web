@@ -192,10 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       sentenceSequence.appendChild(slot);
 
-      // ── 跨頁探索：點擊古字形 → 跳到字形查詢頁深入研究 ──
-      slot.title = `點擊在「字形查詢」中深入探索「${char}」的完整演變`;
+      // ── 跨頁探索：點擊古字形 → 同標籤頁前往字形查詢，可按返回鍵回來 ──
+      slot.title = `點擊深入探索「${char}」的完整字形演變`;
       slot.addEventListener('click', () => {
-        window.open(`index.html?q=${encodeURIComponent(char)}`, '_blank');
+        window.location.href = `index.html?q=${encodeURIComponent(char)}&from=idioms`;
       });
     });
 

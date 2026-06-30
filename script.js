@@ -64,10 +64,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── URL Param Auto-Search (?q=XXX) ──────────
   (function checkUrlParam() {
     const params = new URLSearchParams(window.location.search);
-    const q = params.get('q');
+    const q    = params.get('q');
+    const from = params.get('from');
+
+    // 顯示返回按鈕
+    if (from) {
+      const backLink = document.getElementById('backLink');
+      const backText = document.getElementById('backLinkText');
+      if (backLink && backText) {
+        const labels = { idioms: '返回題庫練習', convert: '返回繁簡轉換' };
+        backText.textContent = labels[from] || '返回上一頁';
+        backLink.style.display = 'inline-flex';
+      }
+    }
+
+    // 自動搜索
     if (q) {
       searchInput.value = decodeURIComponent(q);
-      // 等 DOM 完全穩定後再搜索
       requestAnimationFrame(() => performSearch());
     }
   })();
