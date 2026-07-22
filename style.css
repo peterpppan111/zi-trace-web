@@ -210,6 +210,10 @@ a, button, .interactive {
   gap: 15px;
   padding: 40px 0;
   margin-bottom: 16px;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: initial;
 }
 
 /* 聚光灯效果 (Museum spotlight) */
